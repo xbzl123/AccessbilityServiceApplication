@@ -1,22 +1,22 @@
 package com.raysharp.accessbilityserviceapplication.service
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.view.accessibility.AccessibilityEvent
-import android.widget.Toast
 import android.accessibilityservice.GestureDescription
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
-import android.view.accessibility.AccessibilityNodeInfo
-
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
+import android.util.Log
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.raysharp.accessbilityserviceapplication.SocketClient
+import java.lang.reflect.Method
 
 
 data class ScrollData(
@@ -63,12 +63,14 @@ class AccessbilityServiceImp: AccessibilityService() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             Log.e("AccessbilityServiceImp","onReceive = "+p1?.action)
             when(p1?.action){
+
                 "start"->{
                     val displayMetrics = p0?.resources?.displayMetrics
                     val width = displayMetrics?.widthPixels?.toFloat()
                     val height = displayMetrics?.heightPixels?.toFloat()
                     Log.e("AccessbilityServiceImp","width ="+width+",height = "+height)
                     val accessbilityServiceImp = p0 as AccessbilityServiceImp
+                    accessbilityServiceImp.collapseStatusBar(context = p0)
                     //打开日常任务
 //                    Handler().postDelayed({
 //                        if (height != null) {
@@ -386,43 +388,43 @@ class AccessbilityServiceImp: AccessibilityService() {
 //                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
 //                        }
 //                    },36000)
-                    //高级邀请
-                    Handler().postDelayed({
-                        if (height != null) {
-                            if (width != null) {
-                                accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
-                        }
-                    },3000)
-                    Handler().postDelayed({
-                        if (height != null) {
-                            if (width != null) {
-                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+10,null)
-                            }
-                        }
-                    },3500)
-                    //点击确定
-                    Handler().postDelayed({
-                        if (height != null) {
-                            if (width != null) {
-                                accessbilityServiceImp.ActionDeal(width/3,height/4*3+50,null)
-                            }
-                        }
-                    },7000)
-                    //点击返回
-                    Handler().postDelayed({
-                        if (height != null) {
-                            if (width != null) {
-                                accessbilityServiceImp.ActionDeal(width/10,height/10,null)
-                            }
-                        }
-                    },7500)
-                    //领取啤酒邀请
-                    Handler().postDelayed({
-                        if (height != null) {
-                            if (width != null) {
-                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-                        }
-                    },8000)
+//                    //高级邀请
+//                    Handler().postDelayed({
+//                        if (height != null) {
+//                            if (width != null) {
+//                                accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
+//                        }
+//                    },37000)
+//                    Handler().postDelayed({
+//                        if (height != null) {
+//                            if (width != null) {
+//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+10,null)
+//                            }
+//                        }
+//                    },38000)
+//                    //点击确定
+//                    Handler().postDelayed({
+//                        if (height != null) {
+//                            if (width != null) {
+//                                accessbilityServiceImp.ActionDeal(width/3,height/4*3+50,null)
+//                            }
+//                        }
+//                    },43000)
+//                    //点击返回
+//                    Handler().postDelayed({
+//                        if (height != null) {
+//                            if (width != null) {
+//                                accessbilityServiceImp.ActionDeal(width/10,height/10,null)
+//                            }
+//                        }
+//                    },43500)
+//                    //领取啤酒邀请
+//                    Handler().postDelayed({
+//                        if (height != null) {
+//                            if (width != null) {
+//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+//                        }
+//                    },44000)
                 }
             }
         }
@@ -439,6 +441,23 @@ class AccessbilityServiceImp: AccessibilityService() {
 //            ActionDeal()
             isClick = true
             showToast()
+        }
+    }
+    fun collapseStatusBar(context: Context) {
+        val service = context.getSystemService("statusbar") ?: return
+        try {
+            val clazz = Class.forName("android.app.StatusBarManager")
+            val sdkVersion = Build.VERSION.SDK_INT
+            var collapse: Method? = null
+            collapse = if (sdkVersion <= 16) {
+                clazz.getMethod("collapse")
+            } else {
+                clazz.getMethod("collapsePanels")
+            }
+            collapse.setAccessible(true)
+            collapse.invoke(service)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

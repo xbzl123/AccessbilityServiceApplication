@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- 模拟操作-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
