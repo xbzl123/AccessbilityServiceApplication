@@ -59,6 +59,7 @@ class AccessbilityServiceImp: AccessibilityService() {
     }
 
     class LocalBroadcastReceiver: BroadcastReceiver() {
+
         @RequiresApi(Build.VERSION_CODES.N)
         override fun onReceive(p0: Context?, p1: Intent?) {
             Log.e("AccessbilityServiceImp","onReceive = "+p1?.action)
@@ -70,361 +71,588 @@ class AccessbilityServiceImp: AccessibilityService() {
                     val height = displayMetrics?.heightPixels?.toFloat()
                     Log.e("AccessbilityServiceImp","width ="+width+",height = "+height)
                     val accessbilityServiceImp = p0 as AccessbilityServiceImp
+                    //消息栏收起
                     accessbilityServiceImp.collapseStatusBar(context = p0)
+                    var timespec = 2000L
+
                     //打开日常任务
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width-10f,height/2,null)
+                    Handler().postDelayed({
+                        if (height != null) {
+                            if (width != null) {
+                                accessbilityServiceImp.ActionDeal(width-10f,height/2,null)
+                            }
+                        }
+                    },timespec)
+                    timespec+=500
+
+                   fun commonInviteWork(){
+                       //打开普通邀请任务
+                       Handler().postDelayed({
+                           if (height != null) {
+                               if (width != null) {
+                                   accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
+                               }
+                           }
+                       },timespec)
+                       timespec+=2000
+
+                       Handler().postDelayed({
+                           if (height != null) {
+                               if (width != null) {
+                                   accessbilityServiceImp.ActionDeal(width/4+10,height/4*3+10,null)
+                               }
+                           }
+                       },timespec)
+                       timespec+=500
+
+                       //点击确定
+                       Handler().postDelayed({
+                           if (height != null) {
+                               if (width != null) {
+                                   accessbilityServiceImp.ActionDeal(width/3,height/4*3+50,null)
+                               }
+                           }
+                       },timespec)
+                       timespec+=1000
+
+                       //点击返回
+                       Handler().postDelayed({
+                           if (height != null) {
+                               if (width != null) {
+                                   accessbilityServiceImp.ActionDeal(width/10,height/10,null)
+                               }
+                           }
+                       },timespec)
+                       timespec+=500
+
+                       //领取普通邀请
+                       Handler().postDelayed({
+                           if (height != null) {
+                               if (width != null) {
+                                   accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                           }
+                       },timespec)
+                       timespec+=500
+                   }
+                    fun surviveWork(){
+                        //开始幸存奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //开始免费幸存奖励1
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=1000
+
+                        //确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=1000
+
+                        //开始幸存奖励20钻
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2,height/4*3+50,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+= 1000
+                        //确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+
+                        //关闭幸存奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/6*5+50,height/7,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+
+                        //领取幸存奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                    }
+
+
+                    fun friendWork(){
+                        //开始赠送爱心
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //一键领取和发送
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/6*4.5f,height/4.5f,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //关闭好友列表
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/6*5,height/6,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //领取好友奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                    }
+
+
+                    fun lunckwheelWork(){
+                        //幸运转盘抽奖
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //点击普通幸运转盘抽奖
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/3,null)                            }
+                            }
+                        },timespec)
+                        timespec+=5500
+                        //再一次普通幸运转盘抽奖
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/5*3,height/4*3.2f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //点击确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/5*2,height/4*3.2f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //点击返回
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/10.5f,height/10.5f,null)
+                                }
+                            }
+                        },timespec)
+
+                        //领取幸运转盘抽奖
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                    }
+
+                    fun challengeInstanceZones(){
+                        //前往挑战副本
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //金币挑战
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3,height/4*3.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //金币挑战1
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //金币挑战2
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //返回挑战副本
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //绿药挑战
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/4*3.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+
+                        //绿药挑战1
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //绿药挑战2
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //返回挑战副本
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //碎片挑战
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+
+                        //碎片挑战1
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //碎片挑战2
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //返回挑战副本
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+
+                        //关闭挑战副本
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3*2.6f,height/6.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+
+                        //领取挑战副本奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                    }
+
+
+                    fun highlevelInvite(){
+                        //高级邀请
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/2,height/4*3+10,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=5000
+                        //点击确定
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/3,height/4*3.2f,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //点击返回
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/10.5f,height/10.5f,null)
+                                }
+                            }
+                        },timespec)
+                        timespec+=500
+                        //领取啤酒邀请
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=500
+                    }
+
+                    fun sportsArena(){
+                        //竞技场
+//                        Handler().postDelayed({
+//                            if (height != null) {
+//                                if (width != null) {
+//                                    accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
 //                            }
-//                        }
-//                    },5000)
-                    //打开普通邀请任务
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
-//                            }
-//                        }
-//                    },6000)
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4+10,height/4*3+10,null)
-//                            }
-//                        }
-//                    },6500)
-                    //点击确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3,height/4*3+50,null)
-//                            }
-//                        }
-//                    },7000)
-                    //点击返回
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/10,height/10,null)
-//                            }
-//                        }
-//                    },7500)
-                    //领取普通邀请
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },8000)
-//                    //开始幸存奖励
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
-//                            }
-//                        }
-//                    },8500)
-//                    //开始免费幸存奖励1
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
-//                            }
-//                        }
-//                    },9000)
-//
-//                    //确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
+//                        },timespec)
+//                        timespec+=1000
+                        var count = 0
+                        while (count < 3){
+                            //点击战斗1
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/4*3.5f,height/1.5f,null)                            }
+                                }
+                            },timespec)
+                            timespec+=1000
+
+                            //点击刷新
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/4*3.3f,height/3.9f,null)                            }
+                                }
+                            },timespec)
+                            timespec+=1000
+
+                            //点击刷新
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/4*3.3f,height/3.9f,null)                            }
+                                }
+                            },timespec)
+                            timespec+=1000
+                            //选择最后一名点击战斗
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/4*3.2f,height/5*4,null)                            }
+                                }
+                            },timespec)
+                            timespec+=1000
+
+                            //英雄出战点击战斗
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/4*3.2f,height/2.2f,null)                            }
+                                }
+                            },timespec)
+                            timespec+=3000
+
+                            //翻牌中间
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/1.8f,height/2f,null)
+                                        Log.e("翻盘1","widyh = "+width/1.8f+",height = "+height/2f)
+                                    }
+                                }
+                            },timespec)
+                            timespec+=1000
+                            Log.e("timespec","timespec111 = "+timespec)
+
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/2,height/2f,null)                            }
+                                }
+
+                            },timespec)
+                            timespec+=1000
+                            //点击确定
+                            Log.e("timespec","timespec222 = "+timespec)
+
+                            Handler().postDelayed({
+                                if (height != null) {
+                                    if (width != null) {
+                                        accessbilityServiceImp.ActionDeal(width/1.8f,height/5*4,null)                            }
+                                }
+
+                            },timespec)
+                            timespec+=1000
+                            count+=1
+                        }
+
+//                        //点击返回
+//                        Handler().postDelayed({
+//                            if (height != null) {
+//                                if (width != null) {
+//                                    accessbilityServiceImp.ActionDeal(width/10.5f,height/10.5f,null)
 //                                }
 //                            }
-//                        },9500)
-//
-//
-//                    //开始免费幸存奖励2
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
-//                            }
-//                        }
-//                    },10500)
-//                    //确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+50,null)
-//                            }
-//                        }
-//                    },11000)
+//                        },timespec)
+//                        timespec+=1000
 
-//                    //关闭幸存奖励
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/6*5+50,height/7,null)
+//                        //领取战斗奖励
+//                        Handler().postDelayed({
+//                            if (height != null) {
+//                                if (width != null) {
+//                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
 //                            }
-//                        }
-//                    },11500)
+//                        },timespec)
+//                        timespec+=1000
 
-//                    //领取幸存奖励
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },12000)
+                    }
 
-//                    //开始赠送爱心
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)
-//                            }
-//                        }
-//                    },12500)
-//                    //一键领取和发送
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/6*4.5f,height/4.5f,null)
-//                            }
-//                        }
-//                    },13000)
-//
-//                    //关闭好友列表
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/6*5,height/6,null)
-//                            }
-//                        }
-//                    },13500)
-                //               //领取好友奖励
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },14500)
+                    fun searchLevel(){
+                        //点击搜索关卡
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //点击宝箱
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/5*4.5f,height/5*4,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //点击领取
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width*0.5f,height/5*4.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                        //点击返回
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/10.5f,height/10.5f,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
 
-//                    //幸运转盘抽奖
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },15000)
-//                    //点击普通幸运转盘抽奖
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/2-100,null)                            }
-//                        }
-//                    },15500)
-//                    //再一次普通幸运转盘抽奖
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/5*3,height/4*3.2f,null)                            }
-//                        }
-//                    },21000)
-//                    //点击确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/5*2,height/4*3.2f,null)                            }
-//                        }
-//                    },22000)
-//                    //点击返回
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/10,height/10,null)
-//                            }
-//                        }
-//                    },23000)
-//
-//                    //领取幸运转盘抽奖
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },24000)
-
-//                    //前往挑战副本
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },24500)
-//                    //金币挑战
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3,height/4*3.5f,null)                            }
-//                        }
-//                    },25000)
-
-//                    //金币挑战1
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-//                        }
-//                    },25500)
-//                    //金币挑战2
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-//                        }
-//                    },26000)
-//                    //确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
-//                        }
-//                    },26500)
-
-//                    //返回挑战副本
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
-//                        }
-//                    },27000)
-//                    //绿药挑战
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3.5f,null)                            }
-//                        }
-//                    },27500)
-//
-//                    //绿药挑战1
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-//                        }
-//                    },28000)
-//                    //绿药挑战2
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-//                        }
-//                    },28500)
-//                    //确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
-//                        }
-//                    },29000)
-//                                    //返回挑战副本
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
-//                        }
-//                    },29500)
-//                    //碎片挑战
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2,height/4*3.5f,null)                            }
-//                        }
-//                    },30000)
-//
-//                    //碎片挑战1
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-//                        }
-//                    },31000)
-//                    //碎片挑战2
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-//                        }
-//                    },32000)
-//                    //确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2f,height/4*3.3f,null)                            }
-//                        }
-//                    },33000)
-                //                                    //返回挑战副本
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.5f,height/6.5f,null)                            }
-//                        }
-//                    },34000)
-
-//                    //关闭挑战副本
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3*2.6f,height/6.5f,null)                            }
-//                        }
-//                    },35000)
-
-                    //                    //领取挑战副本奖励
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },36000)
-//                    //高级邀请
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/5*4,null)                            }
-//                        }
-//                    },37000)
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/2,height/4*3+10,null)
-//                            }
-//                        }
-//                    },38000)
-//                    //点击确定
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/3,height/4*3+50,null)
-//                            }
-//                        }
-//                    },43000)
-//                    //点击返回
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/10,height/10,null)
-//                            }
-//                        }
-//                    },43500)
-//                    //领取啤酒邀请
-//                    Handler().postDelayed({
-//                        if (height != null) {
-//                            if (width != null) {
-//                                accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
-//                        }
-//                    },44000)
+                        //领取搜索奖励
+                        Handler().postDelayed({
+                            if (height != null) {
+                                if (width != null) {
+                                    accessbilityServiceImp.ActionDeal(width/4*3,height/2,null)                            }
+                            }
+                        },timespec)
+                        timespec+=1000
+                    }
+//                    commonInviteWork()
+//                    surviveWork()
+//                    friendWork()
+//                    lunckwheelWork()
+//                    challengeInstanceZones()
+//                    highlevelInvite()
+                    sportsArena()
+//                    searchLevel()
                 }
             }
         }

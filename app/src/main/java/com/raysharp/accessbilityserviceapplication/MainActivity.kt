@@ -12,6 +12,7 @@ import com.raysharp.accessbilityserviceapplication.databinding.ActivityMainBindi
 import com.raysharp.accessbilityserviceapplication.service.AccessbilityServiceImp
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
+import android.provider.Settings
 import android.util.Log
 
 import android.view.accessibility.AccessibilityManager
@@ -26,7 +27,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter
@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 //        val order = arrayOf("input", "tap", "" + 500.0, "" + 1500.0)
         Log.d("MainActivity", "checkRootPermission -->" +
                 AutoTouch.width+",AutoTouch.height = "+AutoTouch.height)
+        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
 
         val intent = Intent(this,AccessbilityServiceImp::class.java)
         startService(intent)
