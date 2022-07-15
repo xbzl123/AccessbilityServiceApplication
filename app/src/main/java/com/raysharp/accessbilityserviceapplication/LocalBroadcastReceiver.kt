@@ -80,7 +80,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                             //点击刷新
                             accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2
                                 ,accessbilityServiceImp!!.height/10*9.3f,timespec)
-                        timespec+=2500L
+                        timespec+=3500L
 
                         Handler().postDelayed(
                                 {startSnapShoot()}, timespec
@@ -92,7 +92,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                         //点击刷新
                         accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2,
                             accessbilityServiceImp!!.height/10*9.3f,timespec)
-                        timespec+=2500L
+                        timespec+=3500L
 //                        accessbilityServiceImp?.timespec = accessbilityServiceImp?.timespec?.plus(1000L)!!
                         Handler().postDelayed(
                             {startSnapShoot()}, timespec
