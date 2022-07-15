@@ -11,7 +11,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
-                android:layout_marginVertical="10dp"
+                android:layout_marginVertical="20dp"
                 android:orientation="horizontal"
                 android:gravity="right">
                 <TextView
@@ -22,9 +22,10 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:textColor="@color/black"
+                    android:layout_marginLeft="20dp"
                     android:textSize="16sp"
                     android:layout_gravity="bottom"
-                    android:text="111111"/>
+                    android:text="点击器"/>
             <ImageView
                     android:id="@+id/widget_play"
                     android:layout_width="wrap_content"
@@ -37,6 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginRight="20dp"
                     app:srcCompat="@drawable/ic_baseline_stop_24" />
             </LinearLayout>
 

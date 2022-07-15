@@ -36,8 +36,18 @@ object GameNotification {
         remoteViews!!.setImageViewResource(R.id.widget_stop, R.drawable.ic_baseline_stop_24)
 
         val builder = NotificationCompat.Builder(context)
+
+        val intent = Intent(context, MainActivity::class.java)
+        // 点击跳转到主界面
+        val intent_go = PendingIntent.getActivity(
+            context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        remoteViews!!.setOnClickPendingIntent(R.id.notice, intent_go)
+
+
         val start = Intent()
-        start.action = "start"
+        start.action = Command.ACTION_START
         val intent_start = PendingIntent.getBroadcast(
             context, 0, start,
             PendingIntent.FLAG_UPDATE_CURRENT
@@ -46,7 +56,7 @@ object GameNotification {
 
         // 设置收藏
         val stop = Intent()
-        stop.action = "stop"
+        stop.action = Command.ACTION_STOP
         val intent_stop = PendingIntent.getBroadcast(
             context, 1, stop,
             PendingIntent.FLAG_UPDATE_CURRENT

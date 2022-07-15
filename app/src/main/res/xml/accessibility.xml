@@ -4,4 +4,6 @@
     android:accessibilityFeedbackType="feedbackAllMask"
     android:canPerformGestures="true"
     android:canRetrieveWindowContent="true"
+    android:canRequestTouchExplorationMode = "true"
+    android:canTakeScreenshot="true"
     android:description="@string/app_name" />
