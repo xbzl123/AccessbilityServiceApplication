@@ -33,7 +33,11 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
 
 
         override fun onSuccess(screenshotResult: AccessibilityService.ScreenshotResult) {
-            Log.e("AccessbilityServiceImp","onSuccess = "+screenshotResult)
+
+            val nodeInfo = accessbilityServiceImp?.rootInActiveWindow
+            val result = nodeInfo?.let { accessbilityServiceImp?.findNodeInfosByText(it,"任务") }
+            Log.e("AccessbilityServiceImp","onSuccess = "+screenshotResult+",result = "+result)
+
             var timespec = 500L
             val hardwareBuffer = screenshotResult.hardwareBuffer
             val colorSpace = screenshotResult.colorSpace
@@ -43,73 +47,75 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     val starsNum = ScreenShootDealwith.getStarsNum(bitmap)
                     val canStartTasks = starsNum.filter { it.stars > 3 }
                     Log.e("AccessbilityServiceImp","starsNum = "+starsNum+",canStartTasks = "+canStartTasks)
-                    canStartTasks.map {
-                        accessbilityServiceImp?.clickScreen(
-                            it.rect.x.toFloat(),
-                            it.rect.y.toFloat(),timespec
-                        )
-                        timespec+=1000L
-                        //点击一键上阵
-                        accessbilityServiceImp?.clickScreen(
-                            accessbilityServiceImp!!.width / 2,
-                            accessbilityServiceImp!!.height / 10 * 9,timespec
-                        )
-                        timespec+=1000L
-
-                        //点击开始任务
-                        accessbilityServiceImp?.clickScreen(
-                            accessbilityServiceImp!!.width / 3 * 2,
-                            accessbilityServiceImp!!.height / 10 * 9,timespec
-                        )
-                        timespec+=1000L
-                    }
-
-                    if(starsNum.size > 4){
-                        accessbilityServiceImp?.slidingScreen(ScrollData(true,slidingValue,0f)
-                        ,timespec)
-                        timespec+=3500L
-
-                        slidingValue = slidingValue + canStartTasks.size *110f
-                        isSlidingScreen = true
-                        Handler().postDelayed(
-                            {startSnapShoot()}, timespec
-                        )
-                        return
-                    }
-                    if (isSlidingScreen){
-                            //点击刷新
-                            accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2
-                                ,accessbilityServiceImp!!.height/10*9.3f,timespec)
-                        timespec+=3500L
-
-                        Handler().postDelayed(
-                                {startSnapShoot()}, timespec
-                            )
-                        isSlidingScreen = false
-                        return
-                    }
-                    if(starsNum.size <= 4 && starsNum.size > 0) {
-                        //点击刷新
-                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2,
-                            accessbilityServiceImp!!.height/10*9.3f,timespec)
-                        timespec+=3500L
-//                        accessbilityServiceImp?.timespec = accessbilityServiceImp?.timespec?.plus(1000L)!!
-                        Handler().postDelayed(
-                            {startSnapShoot()}, timespec
-                        )
-                        return
-                    }
-
-                    if (starsNum.size == 0){
-                        //点击一键领取
-                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2.2f,accessbilityServiceImp!!.height/7)
-                        //确定
-                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*1.8f,accessbilityServiceImp!!.height/3*2.1f)
-                        //收取
-                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/2f,accessbilityServiceImp!!.height/3*2.3f)
-                        //返回
-                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/10,accessbilityServiceImp!!.height/10)
-                    }
+//                    canStartTasks.map {
+//                        accessbilityServiceImp?.clickScreen(
+//                            it.rect.x.toFloat(),
+//                            it.rect.y.toFloat(),timespec
+//                        )
+//                        timespec+=1000L
+//                        //点击一键上阵
+//                        accessbilityServiceImp?.clickScreen(
+//                            accessbilityServiceImp!!.width / 2,
+//                            accessbilityServiceImp!!.height / 10 * 9,timespec
+//                        )
+//                        timespec+=1000L
+//
+//                        //点击开始任务
+//                        accessbilityServiceImp?.clickScreen(
+//                            accessbilityServiceImp!!.width / 3 * 2,
+//                            accessbilityServiceImp!!.height / 10 * 9,timespec
+//                        )
+//                        timespec+=1000L
+//                    }
+//
+//                    if(starsNum.size > 4){
+//                        accessbilityServiceImp?.slidingScreen(ScrollData(true,slidingValue,0f)
+//                        ,timespec)
+//                        timespec+=3500L
+//
+//                        slidingValue = slidingValue + canStartTasks.size *110f
+//                        isSlidingScreen = true
+//                        Handler().postDelayed(
+//                            {startSnapShoot()}, timespec
+//                        )
+//                        return
+//                    }
+//                    if (isSlidingScreen){
+//                            //点击刷新
+//                            accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2
+//                                ,accessbilityServiceImp!!.height/10*9.3f,timespec)
+//                        timespec+=3500L
+//
+//                        Handler().postDelayed(
+//                                {startSnapShoot()}, timespec
+//                            )
+//                        isSlidingScreen = false
+//                        return
+//                    }
+//                    if(starsNum.size <= 4 && starsNum.size > 0) {
+//                        //点击刷新
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2,
+//                            accessbilityServiceImp!!.height/10*9.3f,timespec)
+//                        timespec+=3500L
+////                        accessbilityServiceImp?.timespec = accessbilityServiceImp?.timespec?.plus(1000L)!!
+//                        Handler().postDelayed(
+//                            {startSnapShoot()}, timespec
+//                        )
+//                        return
+//                    }
+//
+//                    if (starsNum.size == 0){
+//                        //点击一键领取
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*2.2f,accessbilityServiceImp!!.height/7)
+//                        //确定
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/3*1.8f,accessbilityServiceImp!!.height/3*2.1f)
+//                        //收取
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/2f,accessbilityServiceImp!!.height/3*2.3f)
+//                        //返回
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/10f,accessbilityServiceImp!!.height/10f)
+//                        //领取奖励
+//                        accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/4*3,accessbilityServiceImp!!.height/2)
+//                    }
                 }
             }
         }
@@ -142,7 +148,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 //消息栏收起
                 accessbilityServiceImp!!.collapseStatusBar(context = p0)
                 val nodeInfo = accessbilityServiceImp!!.rootInActiveWindow
-
                 if(status?.get(0) == 1){
                     accessbilityServiceImp!!.openDailyTask()
                 }

@@ -68,7 +68,7 @@ object ScreenShootDealwith {
 
         var box: Rect?
         val boxs = ArrayList<Rect>()
-        val runningOrovers = ArrayList<Rect>()
+        val taskContent = ArrayList<Rect>()
 
         for (i in contours.indices) {
 
@@ -94,9 +94,9 @@ object ScreenShootDealwith {
                 Imgproc.rectangle(dst, box.tl(), box.br(), color, 2)
 
                 boxs.add(box)
-                if(box.height < 50){
-                    runningOrovers.add(box)
-                }
+
+            }else if (box.width  < box.height){
+                taskContent.add(box)
             }
         }
 
@@ -128,8 +128,40 @@ object ScreenShootDealwith {
             }
         }
 
-        Log.e("test","bitmap1 boxs= "+lastLists.size)
+        Utils.matToBitmap(dst,bitmapNew)
+        Log.e("test","bitmap1 = "+bitmapNew)
         return lastLists
+    }
+
+    private fun cutStarContent(bitmap: Bitmap, list: ArrayList<Rect>): List<TaskInfo> {
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        //opencvプリプロセッサ
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("--------opencv--------", "OpenCVLoader error")
+        }
+        //Mat変換
+        val mRgb = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, mRgb)
+        var starsNum = ArrayList<TaskInfo>()
+        list.map {
+            val rect = Rect(it.x, it.y, it.width, it.height)
+
+            val src = Mat(mRgb, rect)
+
+            val b = Bitmap.createBitmap(
+                src!!.cols(), src.rows(),
+                Bitmap.Config.ARGB_8888
+            )
+
+            Utils.matToBitmap(src, b)
+
+            val num = returnStarsNum(b)
+//            starsNum.add(TaskInfo(rect,num))
+
+//            Log.e("AccessbilityServiceImp", "bitmap1 = num " + num)
+        }
+        return starsNum
     }
 
     private fun cutStarsPictrue(bitmap: Bitmap, list: ArrayList<Rect>): List<TaskInfo> {

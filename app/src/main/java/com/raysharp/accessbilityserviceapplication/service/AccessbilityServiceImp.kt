@@ -68,14 +68,6 @@ class AccessbilityServiceImp: AccessibilityService() {
         super.onDestroy()
         unregisterReceiver(localBroadcastReceiver)
     }
-
-//    private fun startSnapShoot(): Bitmap {
-//        val view1 = Dialog(this, R.style.Theme_AppCompat).window?.decorView
-//        val bitmap = view1?.let { Bitmap.createBitmap(it.width, view1.height, Bitmap.Config.ARGB_8888) }
-//        val canvas = Canvas(bitmap!!)
-//        view1?.draw(canvas)
-//        return bitmap
-//    }
     val mHandler:TaskHandler = TaskHandler()
 
     class TaskHandler:Handler(Looper.getMainLooper()){
@@ -247,7 +239,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         mHandler.postDelayed({
             if (height != 0f) {
                 if (width != 0f) {
-                    ActionDeal(width/6*5+50,height/7,null)
+                    ActionDeal(width/6*5.1f,height/7,null)
                 }
             }
         },11,timespec)
@@ -313,7 +305,7 @@ class AccessbilityServiceImp: AccessibilityService() {
                     ActionDeal(width/4*3,height/2,null)                            }
             }
         },17,timespec)
-        timespec+=1500
+        timespec+=1000
         //点击普通幸运转盘抽奖
         mHandler.postDelayed({
             if (height != 0f) {
@@ -321,7 +313,7 @@ class AccessbilityServiceImp: AccessibilityService() {
                     ActionDeal(width/1.8f,height/2.5f,null)                            }
             }
         },18,timespec)
-        timespec+=5500
+        timespec+=6000
         //再一次普通幸运转盘抽奖
         mHandler.postDelayed({
             if (height != 0f) {
@@ -741,8 +733,10 @@ class AccessbilityServiceImp: AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        val rootInActiveWindow = this.rootInActiveWindow
         Log.e("AccessbilityServiceImp","onAccessibilityEvent = "+event?.packageName
-        +"，action = "+event?.action)
+        +"，action = "+event?.action+"，eventType = "+event?.eventType+",rootInActiveWindow = "+rootInActiveWindow)
+
 //        if (event?.packageName.contentEquals("com.tencent.mm") && !isClick){
 //            isClick = true
 //            showToast()
@@ -792,6 +786,31 @@ class AccessbilityServiceImp: AccessibilityService() {
             }
 
         },null)
+    }
+
+    //滑动屏幕返回
+    fun ActionBack() {
+        val action:()->Unit = {
+            var path = android.graphics.Path()
+            path.moveTo(10f,110f)
+            path.lineTo(110f ,110f)
+            val gestureDescription = GestureDescription.Builder()
+                .addStroke(GestureDescription.StrokeDescription(path, 0, 500L))
+                .build()
+            dispatchGesture(gestureDescription,object : AccessibilityService.GestureResultCallback(){
+                override fun onCancelled(gestureDescription: GestureDescription?) {
+                    super.onCancelled(gestureDescription)
+                    Log.e("AccessbilityServiceImp","gestureDescription = onCancelled")
+                }
+
+                override fun onCompleted(gestureDescription: GestureDescription?) {
+                    super.onCompleted(gestureDescription)
+                    Log.e("AccessbilityServiceImp","gestureDescription = onCompleted")
+                }
+
+            },null)
+        }
+        mHandler.postDelayed(action,1000)
     }
 
     override fun onInterrupt() {
