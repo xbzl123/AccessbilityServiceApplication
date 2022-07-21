@@ -65,6 +65,9 @@ object ScreenShootDealwith {
         )
         Imgproc.drawContours(dst, contours, -1, color, 1)
 
+        //相似度对比，接近1为完全相同
+        Imgproc.compareHist(dst,src,Imgproc.HISTCMP_INTERSECT)
+
         val list = ArrayList<Point>()
 
         var box: Rect?
@@ -83,7 +86,7 @@ object ScreenShootDealwith {
             val bbox = Imgproc.minAreaRect(ptmat2)
             box = bbox.boundingRect()
 
-            if (box.width > box.height * 5 && box.width < box.height * 12 /*&& box.height > 50*/) {
+            if (box.width > box.height * 5 && box.width < box.height * 12/* && box.height > 50*/) {
 
                 Imgproc.circle(dst, bbox.center, 5, color, -1)
                 list.add(bbox.center)
@@ -205,7 +208,7 @@ object ScreenShootDealwith {
                     starsNum.add(it)
                 }
             }else{
-                if (num in 5..10) {
+                if (num in 5..9) {
                     starsNum.add(it)
                 }
             }
