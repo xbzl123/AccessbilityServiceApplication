@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,7 +20,7 @@
             android:checked="true" />
 
         <CheckBox
-            android:id="@+id/dialy_task"
+            android:id="@+id/daily_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="打开日常任务"
@@ -63,14 +62,14 @@
             android:checked="true">
         </CheckBox>
         <CheckBox
-            android:id="@+id/hight_invite"
+            android:id="@+id/senior_invite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="高级邀请"
             android:checked="true">
         </CheckBox>
         <CheckBox
-            android:id="@+id/sportsarena_task"
+            android:id="@+id/arena_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="竞技场任务"
@@ -91,10 +90,20 @@
             android:checked="true">
         </CheckBox>
 
+
+        <CheckBox
+            android:id="@+id/champion_tried"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="冠军试炼">
+        </CheckBox>
+
     </LinearLayout>
 
+
+
     <Button
-        android:id="@+id/upload_modifty"
+        android:id="@+id/upload_modify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"
@@ -108,11 +117,6 @@
         android:layout_marginHorizontal="50dp"
         android:checked="true"
         android:text="关闭辅助服务" />
-    <ImageView
-        android:id="@+id/show"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </ImageView>
 
 
 </LinearLayout>

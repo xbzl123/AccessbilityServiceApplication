@@ -25,6 +25,112 @@ object ScreenShootDealwith {
         return cutStarsPictrue(bitmap,detectFristStarsRect(bitmap))
     }
 
+    fun getSkipFight(bitmap: Bitmap): Boolean {
+        return detectSkipFightRect(bitmap)
+    }
+
+    private fun detectSkipFightRect(bitmap: Bitmap):Boolean{
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        //opencvプリプロセッサ
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("--------opencv--------", "OpenCVLoader error")
+        }
+        //Mat変換
+        val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, src)
+
+        val dst = Mat.zeros(Size(src.width().toDouble(), src.height().toDouble()), CvType.CV_8UC3)
+        // 輪郭を描画 (Yellow)
+        var color = Scalar(255.0, 255.0, 0.0)
+
+        //灰色化
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
+        //Gaussian Filters
+        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+        //二値化
+        Imgproc.threshold(
+            src, src, 0.0, 255.0,
+            Imgproc.THRESH_BINARY or Imgproc.THRESH_OTSU
+        )
+
+        Utils.matToBitmap(src,bitmapNew)
+
+        //比特反转
+        val hierarchy = Mat.zeros(Size(40.0, 10.0), CvType.CV_8UC1)
+//
+//        Core.bitwise_not(src, src)
+        Imgproc.erode(src,src,hierarchy)
+
+        Utils.matToBitmap(src,bitmapNew)
+
+        // 輪郭抽出
+        val contours:List<MatOfPoint> = ArrayList()
+
+        Imgproc.findContours(
+            src,
+            contours,
+            hierarchy,
+            Imgproc.RETR_TREE,
+            Imgproc.CHAIN_APPROX_SIMPLE
+        )
+        Imgproc.drawContours(dst, contours, -1, color, 1)
+
+        //相似度对比，接近1为完全相同
+//        Imgproc.compareHist(dst,src,Imgproc.HISTCMP_INTERSECT)
+//        Imgproc.matchTemplate()
+
+        val list = ArrayList<Point>()
+
+        var box: Rect?
+        val boxs = ArrayList<Rect>()
+        for (i in contours.indices) {
+
+            // 去除小轮廓 (ノイズ除去)
+            if (Imgproc.contourArea(contours.get(i)) < dst.size().area() / 1000) {
+                continue
+            }
+
+            val ptmat: MatOfPoint = contours[i]
+            // 轮廓的重心的绘制 (Red)
+            color = Scalar(255.0, 0.0, 0.0)
+            val ptmat2 = MatOfPoint2f(*ptmat.toArray())
+            val bbox = Imgproc.minAreaRect(ptmat2)
+            box = bbox.boundingRect()
+
+            if (box.width > box.height * 3 && box.width < box.height * 5/* && box.height > 50*/) {
+
+                Imgproc.circle(dst, bbox.center, 5, color, -1)
+                list.add(bbox.center)
+
+                // 周围轮廓四角形绘制 (Green)
+                color = Scalar(0.0, 255.0, 0.0)
+                Imgproc.rectangle(dst, box.tl(), box.br(), color, 2)
+
+                boxs.add(box)
+            }
+        }
+
+        //去重复的
+        val temp = ArrayList<Rect>()
+        temp.addAll(boxs)
+        boxs.map {
+            val rect1 = it
+            var c = 0
+            boxs.map {
+                val isContainer = it.contains(rect1.tl()) || it.contains(rect1.br())
+                if(isContainer){
+                    c+=1
+                    if(c > 1){
+                        temp.remove(rect1)
+                    }
+                }
+            }
+        }
+
+        Utils.matToBitmap(dst,bitmapNew)
+        return temp.isEmpty()
+    }
+
     private fun detectFristStarsRect(bitmap: Bitmap):ArrayList<Rect>{
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         //opencvプリプロセッサ

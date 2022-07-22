@@ -44,6 +44,10 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
             if (hardwareBuffer.width > 0 && hardwareBuffer.height > 0 && colorSpace != null) {
                 val bitmap = Bitmap.wrapHardwareBuffer(hardwareBuffer, colorSpace)
                 if (bitmap != null) {
+                    if (status?.get(0) == 200){
+                        ScreenShootDealwith.getSkipFight(bitmap)
+                        return
+                    }
                     val starsNum = ScreenShootDealwith.getStarsNum(bitmap)
                     var canStartTasks = ScreenShootDealwith.cutTaskContent(bitmap,starsNum.filter { it.stars == 3 })
                     canStartTasks += starsNum.filter { it.stars > 3 }
@@ -154,7 +158,13 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
 
                 if(status?.get(0) == 1){
                     accessbilityServiceImp!!.openDailyTask()
+                }else if (status?.get(0) == 200){
+                    accessbilityServiceImp!!.mHandler.post {
+                        startSnapShoot()
+                    }
+                    return
                 }
+
                 if(status?.get(1) == 1){
                     accessbilityServiceImp!!.commonInviteTask()
                 }

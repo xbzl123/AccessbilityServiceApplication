@@ -1,11 +1,9 @@
 package com.raysharp.accessbilityserviceapplication
-//    implementation 'com.quickbirdstudios:opencv:3.4.1'
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.raysharp.accessbilityserviceapplication.databinding.ActivityMainBinding
 import com.raysharp.accessbilityserviceapplication.service.AccessbilityServiceImp
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.ComponentName
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -13,38 +11,14 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
-
-import android.view.accessibility.AccessibilityManager
 import android.widget.CheckBox
-import org.opencv.imgproc.Imgproc
-
-import org.opencv.android.OpenCVLoader
-
-import android.graphics.Bitmap
-
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.os.Environment
 import android.provider.Settings.SettingNotFoundException
-import android.view.SurfaceControl
-import android.view.View
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import org.opencv.android.Utils
-import org.opencv.core.*
-import org.opencv.core.Mat
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import android.text.TextUtils
 import android.text.TextUtils.SimpleStringSplitter
 import com.blankj.utilcode.util.ToastUtils
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mRgb: Mat
     private val serviceConn: ServiceConnection = object :ServiceConnection{
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             Log.d("MainActivity", "onServiceConnected -->" )
@@ -57,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityMainBinding
 
-    var allCheckBoxs = arrayListOf<CheckBox>()
+    private var allCheckBoxes = arrayListOf<CheckBox>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,42 +39,51 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        allCheckBoxs.add(binding.dialyTask)
-        allCheckBoxs.add(binding.commonInvite)
-        allCheckBoxs.add(binding.surviveTask)
-        allCheckBoxs.add(binding.friendTask)
-        allCheckBoxs.add(binding.luckTask)
-        allCheckBoxs.add(binding.challengeTask)
-        allCheckBoxs.add(binding.hightInvite)
-        allCheckBoxs.add(binding.sportsarenaTask)
-        allCheckBoxs.add(binding.searchTask)
-        allCheckBoxs.add(binding.taskBar)
+        allCheckBoxes.add(binding.dailyTask)
+        allCheckBoxes.add(binding.commonInvite)
+        allCheckBoxes.add(binding.surviveTask)
+        allCheckBoxes.add(binding.friendTask)
+        allCheckBoxes.add(binding.luckTask)
+        allCheckBoxes.add(binding.challengeTask)
+        allCheckBoxes.add(binding.seniorInvite)
+        allCheckBoxes.add(binding.arenaTask)
+        allCheckBoxes.add(binding.searchTask)
+        allCheckBoxes.add(binding.taskBar)
 
 
-        AutoTouch.width = this.windowManager.defaultDisplay.width
-        AutoTouch.height = this.windowManager.defaultDisplay.height
-//        val order = arrayOf("input", "tap", "" + 500.0, "" + 1500.0)
-        Log.d("MainActivity", "checkRootPermission -->" +
-                AutoTouch.width+",AutoTouch.height = "+AutoTouch.height)
         if (!isAccessibilitySettingsOn(this)){
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
-        binding.allCheckboxStates.setOnCheckedChangeListener { compoundButton, b ->
-            allCheckBoxs.forEach {
-                it.setChecked(b)
+        binding.allCheckboxStates.setOnCheckedChangeListener { _, b ->
+            allCheckBoxes.forEach {
+                it.isChecked = b
             }
         }
 
-        binding.uploadModifty.setOnClickListener {
+        binding.championTried.setOnCheckedChangeListener { _, b ->
+            if (b){
+                val intent = Intent()
+                // 设置传播的键值对：
+                val status = ArrayList<Int>()
+                status.add(200)
+                intent.putIntegerArrayListExtra("status", status)
+                // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
+                intent.action = Command.ACTION_MODIFTY
+                // 发送广播
+                sendBroadcast(intent)
+                ToastUtils.showShort("提交成功")
+            }
+        }
+        binding.uploadModify.setOnClickListener {
             val status = getAllCheckBoxState()
-            var intentb = Intent()
+            val intent = Intent()
             // 设置传播的键值对：
-            intentb.putIntegerArrayListExtra("status", status)
+            intent.putIntegerArrayListExtra("status", status)
             // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
-            intentb.setAction(Command.ACTION_MODIFTY)
+            intent.action = Command.ACTION_MODIFTY
             // 发送广播
-            sendBroadcast(intentb)
+            sendBroadcast(intent)
             ToastUtils.showShort("提交成功")
         }
 
@@ -108,23 +91,20 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
         GameNotification.createNotificaton(this)
         binding.accessibilityService.setOnClickListener {
-            var intentb = Intent()
+            val intent = Intent()
             // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
-            intentb.setAction(Command.ACTION_STOP)
+            intent.action = Command.ACTION_STOP
             // 发送广播
-            sendBroadcast(intentb)
+            sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
         }
     }
 
 
-    override fun onResume() {
-        super.onResume()
-    }
     private fun getAllCheckBoxState(): ArrayList<Int>{
         val states = ArrayList<Int>()
-        if(!allCheckBoxs.isEmpty()){
-            states.addAll(allCheckBoxs.map {
+        if(allCheckBoxes.isNotEmpty()){
+            states.addAll(allCheckBoxes.map {
                 if (it.isChecked)
                     1
                 else
@@ -143,9 +123,8 @@ class MainActivity : AppCompatActivity() {
     private fun isAccessibilitySettingsOn(mContext: Context): Boolean {
         var accessibilityEnabled = 0
         // TestService为对应的服务
-        val service = packageName + "/" + AccessbilityServiceImp::class.java.getCanonicalName()
+        val service = packageName + "/" + AccessbilityServiceImp::class.java.canonicalName
         Log.i(TAG, "service:$service")
-        // com.z.buildingaccessibilityservices/android.accessibilityservice.AccessibilityService
         try {
             accessibilityEnabled = Settings.Secure.getInt(
                 mContext.applicationContext.contentResolver,
@@ -162,7 +141,6 @@ class MainActivity : AppCompatActivity() {
                 mContext.applicationContext.contentResolver,
                 Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
             )
-            // com.z.buildingaccessibilityservices/com.z.buildingaccessibilityservices.TestService
             if (settingValue != null) {
                 mStringColonSplitter.setString(settingValue)
                 while (mStringColonSplitter.hasNext()) {
@@ -186,11 +164,4 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    private fun startSnapShoot(): Bitmap {
-        val view1 = window.decorView
-        val bitmap = Bitmap.createBitmap(view1.width, view1.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap!!)
-        view1.draw(canvas)
-        return bitmap
-    }
 }
