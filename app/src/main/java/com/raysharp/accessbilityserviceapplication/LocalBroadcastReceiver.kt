@@ -45,13 +45,15 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 val bitmap = Bitmap.wrapHardwareBuffer(hardwareBuffer, colorSpace)
                 if (bitmap != null) {
                     if (status?.get(0) == 200){
-                        ScreenShootDealwith.getSkipFight(bitmap)
+                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
+                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
+
                         return
                     }
                     val starsNum = ScreenShootDealwith.getStarsNum(bitmap)
                     var canStartTasks = ScreenShootDealwith.cutTaskContent(bitmap,starsNum.filter { it.stars == 3 })
                     canStartTasks += starsNum.filter { it.stars > 3 }
-                    canStartTasks -= ScreenShootDealwith.cutTaskContent(bitmap,starsNum.filter { it.stars > 3 && it.stars < 6})
+                    canStartTasks -= ScreenShootDealwith.cutTaskContent(bitmap,starsNum.filter { it.stars == 4})
                     Log.e("AccessbilityServiceImp","starsNum = "+starsNum+",canStartTasks = "+canStartTasks)
                     canStartTasks.map {
                         accessbilityServiceImp?.clickScreen(
@@ -191,7 +193,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 }
 
                 if(status?.get(9) == 1){
-                    accessbilityServiceImp!!.startTaskBar({startSnapShoot()})
+                    accessbilityServiceImp!!.startTaskBar { startSnapShoot() }
                 }
             }
             Command.ACTION_STOP->{
