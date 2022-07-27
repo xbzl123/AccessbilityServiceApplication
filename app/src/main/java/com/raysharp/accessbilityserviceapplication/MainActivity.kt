@@ -8,6 +8,8 @@ import android.content.ComponentName
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.ServiceConnection
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -97,6 +99,9 @@ class MainActivity : AppCompatActivity() {
             // 发送广播
             sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
+//            ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("0-9.png")))
+            ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("b.jpg")))
+
         }
     }
 

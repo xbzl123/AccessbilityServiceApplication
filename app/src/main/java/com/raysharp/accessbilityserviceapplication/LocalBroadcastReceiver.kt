@@ -45,9 +45,8 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 val bitmap = Bitmap.wrapHardwareBuffer(hardwareBuffer, colorSpace)
                 if (bitmap != null) {
                     if (status?.get(0) == 200){
-                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
-                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
-
+//                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
+//                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
                         return
                     }
                     val starsNum = ScreenShootDealwith.getStarsNum(bitmap)

@@ -7,6 +7,13 @@ import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import kotlin.math.abs
+import org.opencv.core.Mat
+
+
+
+
+
+
 
 /**
  * Copyright (c) 2022 Raysharp.cn. All rights reserved
@@ -47,7 +54,8 @@ object ScreenShootDealwith {
                 src!!.cols(), src.rows(),
                 Bitmap.Config.ARGB_8888
             )
-
+        //归一化
+        Imgproc.resize(src,src,Size(rect.width.toDouble(), rect.height.toDouble()))
         //灰色化
         Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
         //模糊化
@@ -80,7 +88,209 @@ object ScreenShootDealwith {
         return false
     }
 
-    private fun detectSkipFightRect(bitmap: Bitmap):Boolean{
+
+    fun detectNumberContent(bitmap: Bitmap):List<Mat>{
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        //opencvプリプロセッサ
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("--------opencv--------", "OpenCVLoader error")
+        }
+        //Mat変換
+        val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, src)
+
+        val dst = Mat.zeros(Size(src.width().toDouble(), src.height().toDouble()), CvType.CV_8UC3)
+        // 輪郭を描画 (Yellow)
+        var color = Scalar(255.0, 255.0, 0.0)
+
+        //灰色化
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
+        //Gaussian Filters
+        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+        //二値化
+        Imgproc.threshold(
+            src, src, 0.0, 255.0,
+            Imgproc.THRESH_BINARY or Imgproc.THRESH_OTSU
+        )
+
+        //比特反转
+        val hierarchy = Mat.zeros(Size(0.0, 0.0), CvType.CV_8UC1)
+//
+        Core.bitwise_not(src, src)
+//        Imgproc.erode(src,src,hierarchy)
+
+        // 輪郭抽出
+        val contours:List<MatOfPoint> = ArrayList()
+
+        Imgproc.findContours(
+            src,
+            contours,
+            hierarchy,
+            Imgproc.RETR_TREE,
+            Imgproc.CHAIN_APPROX_SIMPLE
+        )
+        Imgproc.drawContours(dst, contours, -1, color, 1)
+
+        val list = ArrayList<Point>()
+
+        var box: Rect?
+        var boxs = HashSet<Rect>()
+        for (i in contours.indices) {
+
+            val ptmat: MatOfPoint = contours[i]
+            // 轮廓的重心的绘制 (Red)
+            color = Scalar(255.0, 0.0, 0.0)
+            val ptmat2 = MatOfPoint2f(*ptmat.toArray())
+            val bbox = Imgproc.minAreaRect(ptmat2)
+            box = bbox.boundingRect()
+
+            if (box.width < box.height /** 2 && box.width < box.height * 3
+                && box.height > 70 && box.height < 75*/) {
+
+                Imgproc.circle(dst, bbox.center, 5, color, -1)
+                list.add(bbox.center)
+
+                // 周围轮廓四角形绘制 (Green)
+                color = Scalar(0.0, 255.0, 0.0)
+                Imgproc.rectangle(dst, box.tl(), box.br(), color, 2)
+
+                boxs.add(box)
+            }
+        }
+
+        val temp = ArrayList<Rect>()
+        temp.addAll(boxs)
+        //去包含的
+        boxs.map {
+            val rect1 = it
+            var c = 0
+            boxs.map {
+                val isContainer = it.contains(rect1.tl()) || it.contains(rect1.br())
+                if(isContainer){
+                    c+=1
+                    if(c > 1){
+                        temp.remove(rect1)
+                    }
+                }
+            }
+        }
+        Utils.matToBitmap(src,bitmapNew)
+        temp.sortBy {
+            it.x
+        }
+
+        val result1 = cutTemplateNumber(src,temp)
+
+//        val result = Mat()
+//        Imgproc.matchTemplate(result1[1],result1[0],result,Imgproc.TM_CCORR)
+//        val bitmap1 = Bitmap.createBitmap(
+//            result1[1]!!.cols(), result1[1].rows(),
+//            Bitmap.Config.ARGB_8888
+//        )
+//        Utils.matToBitmap(result1[1],bitmap1)
+//        Utils.matToBitmap(result1[1],bitmap1)
+//        Log.e("AccessbilityServiceImp", " result =" + result)
+
+        return result1
+    }
+
+    fun detectNumberRect(bitmap: Bitmap):Boolean{
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        //opencvプリプロセッサ
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("--------opencv--------", "OpenCVLoader error")
+        }
+        //Mat変換
+        val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, src)
+
+
+        val rect = Rect(bitmapNew.width/400*102,bitmapNew.height*97/200,50,25)
+        val mRgb = Mat(src, rect)
+
+        val b = Bitmap.createBitmap(
+            mRgb!!.cols(), mRgb.rows(),
+            Bitmap.Config.ARGB_8888
+        )
+        Utils.matToBitmap(mRgb,b)
+
+        val dst = Mat.zeros(Size(src.width().toDouble(), src.height().toDouble()), CvType.CV_8UC3)
+        // 輪郭を描画 (Yellow)
+        var color = Scalar(255.0, 255.0, 0.0)
+
+        //灰色化
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
+//        //Gaussian Filters
+        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+        //二値化
+        Imgproc.threshold(
+            src, src, 100.0, 255.0,
+            Imgproc.THRESH_BINARY or Imgproc.THRESH_OTSU
+        )
+
+        //比特反转
+        val hierarchy = Mat.zeros(Size(0.0, 0.0), CvType.CV_8UC1)
+
+//        val erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, Size(10.0, 1.0))
+//        Imgproc.erode(src,src,erodeKernel)
+
+        // 輪郭抽出
+        val contours:List<MatOfPoint> = ArrayList()
+
+        Imgproc.findContours(
+            src,
+            contours,
+            hierarchy,
+            Imgproc.RETR_TREE,
+            Imgproc.CHAIN_APPROX_SIMPLE
+        )
+        Imgproc.drawContours(dst, contours, -1, color, 1)
+
+        var box: Rect?
+        val boxs = ArrayList<Rect>()
+        for (i in contours.indices) {
+
+            val ptmat: MatOfPoint = contours[i]
+            // 轮廓的重心的绘制 (Red)
+            color = Scalar(255.0, 0.0, 0.0)
+            val ptmat2 = MatOfPoint2f(*ptmat.toArray())
+            val bbox = Imgproc.minAreaRect(ptmat2)
+            box = bbox.boundingRect()
+
+            if (box.width < box.height  && box.height < 30
+            /*&& box.height > 70 && box.height < 75*/) {
+
+                Imgproc.circle(dst, bbox.center, 5, color, -1)
+
+                // 周围轮廓四角形绘制 (Green)
+                color = Scalar(0.0, 255.0, 0.0)
+                Imgproc.rectangle(dst, box.tl(), box.br(), color, 2)
+
+                boxs.add(box)
+            }
+        }
+
+        //去重复的
+        val temp = ArrayList<Rect>()
+        temp.addAll(boxs)
+        boxs.map {
+            val rect1 = it
+            var c = 0
+            boxs.map {
+                val isContainer = it.contains(rect1.tl()) || it.contains(rect1.br())
+                if(isContainer){
+                    c+=1
+                    if(c > 1){
+                        temp.remove(rect1)
+                    }
+                }
+            }
+        }
+
+        Utils.matToBitmap(dst,bitmapNew)
+        return temp.isEmpty()
+    }
+    fun detectSkipFightRect(bitmap: Bitmap):Boolean{
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         //opencvプリプロセッサ
         if (!OpenCVLoader.initDebug()) {
@@ -133,11 +343,6 @@ object ScreenShootDealwith {
         val boxs = ArrayList<Rect>()
         for (i in contours.indices) {
 
-            // 去除小轮廓 (ノイズ除去)
-//            if (Imgproc.contourArea(contours.get(i)) < dst.size().area() / 1000) {
-//                continue
-//            }
-
             val ptmat: MatOfPoint = contours[i]
             // 轮廓的重心的绘制 (Red)
             color = Scalar(255.0, 0.0, 0.0)
@@ -176,7 +381,7 @@ object ScreenShootDealwith {
             }
         }
 
-        Utils.matToBitmap(src,bitmapNew)
+        Utils.matToBitmap(dst,bitmapNew)
         return temp.isEmpty()
     }
 
@@ -283,7 +488,23 @@ object ScreenShootDealwith {
 //        Log.e("test","bitmap1 = "+bitmapNew)
         return lastLists
     }
+    private fun cutTemplateNumber(mRgb: Mat, list: ArrayList<Rect>): List<Mat> {
+        var starsNum = ArrayList<Mat>()
+        list.map {
+            val rect = Rect(it.x , it.y , it.width, it.height)
 
+            val src = Mat(mRgb, rect)
+
+            val b = Bitmap.createBitmap(
+                src!!.cols(), src.rows(),
+                Bitmap.Config.ARGB_8888
+            )
+
+            Utils.matToBitmap(src, b)
+            starsNum.add(src)
+        }
+        return starsNum
+    }
 
     private fun cutStarsPictrue(bitmap: Bitmap, list: ArrayList<Rect>): List<TaskInfo> {
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
