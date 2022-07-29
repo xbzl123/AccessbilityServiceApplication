@@ -5,14 +5,12 @@ import android.util.Log
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.*
+import org.opencv.core.Core.bitwise_not
 import org.opencv.imgproc.Imgproc
 import kotlin.math.abs
 import org.opencv.core.Mat
-
-
-
-
-
+import org.opencv.core.CvType
+import kotlin.math.sign
 
 
 /**
@@ -25,6 +23,10 @@ import org.opencv.core.Mat
 
 data class TaskInfo(
     val rect: Rect,val stars:Int
+)
+
+data class NumberInfo(
+    val bitmap: Mat,val list:List<Rect>
 )
 object ScreenShootDealwith {
 
@@ -106,7 +108,7 @@ object ScreenShootDealwith {
         //灰色化
         Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
         //Gaussian Filters
-        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+//        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
         //二値化
         Imgproc.threshold(
             src, src, 0.0, 255.0,
@@ -144,8 +146,7 @@ object ScreenShootDealwith {
             val bbox = Imgproc.minAreaRect(ptmat2)
             box = bbox.boundingRect()
 
-            if (box.width < box.height /** 2 && box.width < box.height * 3
-                && box.height > 70 && box.height < 75*/) {
+            if (box.width < box.height) {
 
                 Imgproc.circle(dst, bbox.center, 5, color, -1)
                 list.add(bbox.center)
@@ -174,7 +175,7 @@ object ScreenShootDealwith {
                 }
             }
         }
-        Utils.matToBitmap(src,bitmapNew)
+        Utils.matToBitmap(dst,bitmapNew)
         temp.sortBy {
             it.x
         }
@@ -194,7 +195,7 @@ object ScreenShootDealwith {
         return result1
     }
 
-    fun detectNumberRect(bitmap: Bitmap):Boolean{
+    fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): IntArray {
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         //opencvプリプロセッサ
         if (!OpenCVLoader.initDebug()) {
@@ -219,26 +220,28 @@ object ScreenShootDealwith {
         var color = Scalar(255.0, 255.0, 0.0)
 
         //灰色化
-        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
+        Imgproc.cvtColor(mRgb, mRgb, Imgproc.COLOR_RGB2GRAY)
 //        //Gaussian Filters
-        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+//        Imgproc.GaussianBlur(mRgb, mRgb, Size(1.0, 1.0), 0.0, 0.0)
+
+        bitwise_not(mRgb,mRgb);
         //二値化
         Imgproc.threshold(
-            src, src, 100.0, 255.0,
+            mRgb, mRgb, 0.0, 250.0,
             Imgproc.THRESH_BINARY or Imgproc.THRESH_OTSU
         )
-
+        Utils.matToBitmap(mRgb, b)
         //比特反转
         val hierarchy = Mat.zeros(Size(0.0, 0.0), CvType.CV_8UC1)
 
-//        val erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, Size(10.0, 1.0))
-//        Imgproc.erode(src,src,erodeKernel)
+        val erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, Size(10.0, 1.0))
+        Imgproc.erode(src,src,erodeKernel)
 
         // 輪郭抽出
         val contours:List<MatOfPoint> = ArrayList()
 
         Imgproc.findContours(
-            src,
+            mRgb,
             contours,
             hierarchy,
             Imgproc.RETR_TREE,
@@ -286,9 +289,48 @@ object ScreenShootDealwith {
                 }
             }
         }
+        temp.sortBy {
+            it.x
+        }
 
-        Utils.matToBitmap(dst,bitmapNew)
-        return temp.isEmpty()
+
+        //Mat変換
+//        val newMat = Mat(bitmap.height, bitmap.width, CvType.CV_8UC4)
+//        Utils.bitmapToMat(bitmap, newMat)
+
+        val result = intArrayOf()
+//        temp.mapIndexed {i,r->
+//            r.x+=1*(i+1)
+//            r.width-=2*(i+1)
+        val tmp = Mat(mRgb, temp[0])
+            list.map {
+//        val it = list[3]
+        val res = Mat.zeros(it.rows(), it.cols(), CvType.CV_32FC1)
+                //归一化
+//                Imgproc.resize(tmp,tmp,Size(it.width().toDouble(), it.height().toDouble()))
+//                val w= Imgproc.compareHist(it,tmp,Imgproc.HISTCMP_INTERSECT)
+                Imgproc.matchTemplate(tmp,it,res,Imgproc.TM_CCORR)
+
+                //规格化
+                Core.normalize(res, res, 0.0, 1.0,Core.NORM_MINMAX, -1);
+                //获得最可能点，MinMaxLocResult是其数据格式，包括了最大、最小点的位置x、y
+                val mlr = Core.minMaxLoc(res);
+                val bitmap = Bitmap.createBitmap(
+                    tmp!!.cols(), tmp!!.rows(),
+                    Bitmap.Config.ARGB_8888
+                )
+                Utils.matToBitmap(tmp, bitmap)
+                val bitmap1 = Bitmap.createBitmap(
+                    it!!.cols(), it!!.rows(),
+                    Bitmap.Config.ARGB_8888
+                )
+                Utils.matToBitmap(it, bitmap1)
+                Log.e("AccessbilityServiceImp", "mlr result minVal="
+                        + mlr.minVal+",maxVal="+mlr.maxVal+",minLoc="+mlr.minLoc+",maxLoc="+mlr.maxLoc)
+
+            }
+//        }
+        return result
     }
     fun detectSkipFightRect(bitmap: Bitmap):Boolean{
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
