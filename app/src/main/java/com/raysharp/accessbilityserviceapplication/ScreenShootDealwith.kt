@@ -10,8 +10,6 @@ import org.opencv.imgproc.Imgproc
 import kotlin.math.abs
 import org.opencv.core.Mat
 import org.opencv.core.CvType
-import kotlin.math.sign
-
 
 /**
  * Copyright (c) 2022 Raysharp.cn. All rights reserved
@@ -26,7 +24,7 @@ data class TaskInfo(
 )
 
 data class NumberInfo(
-    val bitmap: Mat,val list:List<Rect>
+    val minValue: Double,val index:Int
 )
 object ScreenShootDealwith {
 
@@ -195,7 +193,7 @@ object ScreenShootDealwith {
         return result1
     }
 
-    fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): IntArray {
+    fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): Int {
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         //opencvプリプロセッサ
         if (!OpenCVLoader.initDebug()) {
@@ -206,7 +204,11 @@ object ScreenShootDealwith {
         Utils.bitmapToMat(bitmapNew, src)
 
 
-        val rect = Rect(bitmapNew.width/400*102,bitmapNew.height*97/200,50,25)
+//        val rect = Rect(bitmapNew.width/400*102,bitmapNew.height*97/200,50,25)
+        val rect = Rect(bitmapNew.width/400*102,bitmapNew.height*261/399,50,25)
+
+//        val rect = Rect(bitmapNew.width/400*102,bitmapNew.height*329/400,50,25)
+
         val mRgb = Mat(src, rect)
 
         val b = Bitmap.createBitmap(
@@ -250,7 +252,7 @@ object ScreenShootDealwith {
         Imgproc.drawContours(dst, contours, -1, color, 1)
 
         var box: Rect?
-        val boxs = ArrayList<Rect>()
+        var boxs = ArrayList<Rect>()
         for (i in contours.indices) {
 
             val ptmat: MatOfPoint = contours[i]
@@ -260,7 +262,7 @@ object ScreenShootDealwith {
             val bbox = Imgproc.minAreaRect(ptmat2)
             box = bbox.boundingRect()
 
-            if (box.width < box.height  && box.height < 30
+            if (box.width < box.height  && box.height < 30 && box.width > 10
             /*&& box.height > 70 && box.height < 75*/) {
 
                 Imgproc.circle(dst, bbox.center, 5, color, -1)
@@ -272,65 +274,35 @@ object ScreenShootDealwith {
                 boxs.add(box)
             }
         }
-
-        //去重复的
-        val temp = ArrayList<Rect>()
-        temp.addAll(boxs)
-        boxs.map {
-            val rect1 = it
-            var c = 0
-            boxs.map {
-                val isContainer = it.contains(rect1.tl()) || it.contains(rect1.br())
-                if(isContainer){
-                    c+=1
-                    if(c > 1){
-                        temp.remove(rect1)
-                    }
-                }
-            }
-        }
-        temp.sortBy {
+        boxs.sortBy {
             it.x
         }
 
-
-        //Mat変換
-//        val newMat = Mat(bitmap.height, bitmap.width, CvType.CV_8UC4)
-//        Utils.bitmapToMat(bitmap, newMat)
-
-        val result = intArrayOf()
-//        temp.mapIndexed {i,r->
-//            r.x+=1*(i+1)
-//            r.width-=2*(i+1)
-        val tmp = Mat(mRgb, temp[0])
-            list.map {
-//        val it = list[3]
-        val res = Mat.zeros(it.rows(), it.cols(), CvType.CV_32FC1)
+        val result = ArrayList<NumberInfo>()
+        val tmp = Mat(mRgb, boxs[0])
+            list.mapIndexed { index,it->
+                val result_cols: Int = abs(tmp.cols() - it.cols()) + 1
+                val result_rows: Int = abs(tmp.rows() - it.rows()) + 1
+                val res = Mat(result_rows, result_cols, CvType.CV_32FC1)
                 //归一化
-//                Imgproc.resize(tmp,tmp,Size(it.width().toDouble(), it.height().toDouble()))
-//                val w= Imgproc.compareHist(it,tmp,Imgproc.HISTCMP_INTERSECT)
-                Imgproc.matchTemplate(tmp,it,res,Imgproc.TM_CCORR)
+                var item = it
+                Imgproc.resize(it,it,Size(tmp.width().toDouble(), tmp.height().toDouble()))
+                Imgproc.matchTemplate(tmp,item,res,Imgproc.TM_SQDIFF)
 
-                //规格化
-                Core.normalize(res, res, 0.0, 1.0,Core.NORM_MINMAX, -1);
                 //获得最可能点，MinMaxLocResult是其数据格式，包括了最大、最小点的位置x、y
                 val mlr = Core.minMaxLoc(res);
-                val bitmap = Bitmap.createBitmap(
-                    tmp!!.cols(), tmp!!.rows(),
-                    Bitmap.Config.ARGB_8888
-                )
-                Utils.matToBitmap(tmp, bitmap)
-                val bitmap1 = Bitmap.createBitmap(
-                    it!!.cols(), it!!.rows(),
-                    Bitmap.Config.ARGB_8888
-                )
-                Utils.matToBitmap(it, bitmap1)
+                result.add(NumberInfo(mlr.minVal,index))
+
+
                 Log.e("AccessbilityServiceImp", "mlr result minVal="
                         + mlr.minVal+",maxVal="+mlr.maxVal+",minLoc="+mlr.minLoc+",maxLoc="+mlr.maxLoc)
 
             }
+        result.sortBy {
+            it.minValue
+        }
 //        }
-        return result
+        return result[0].index
     }
     fun detectSkipFightRect(bitmap: Bitmap):Boolean{
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)

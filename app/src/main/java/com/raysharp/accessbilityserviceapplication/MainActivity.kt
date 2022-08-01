@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
             ToastUtils.showShort("停止成功")
             val list = ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("0-9.png")))
             val result = ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("b.jpg")),list)
-
+            Log.e("AccessbilityServiceImp", "result="
+                    + result)
         }
     }
 
