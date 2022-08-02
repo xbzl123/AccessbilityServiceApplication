@@ -16,6 +16,7 @@ import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import com.blankj.utilcode.util.ToastUtils
+import org.opencv.core.Mat
 
 
 class MainActivity : AppCompatActivity() {
@@ -98,7 +99,10 @@ class MainActivity : AppCompatActivity() {
             // 发送广播
             sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
-            val list = ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("0-9.png")))
+            var list = ArrayList<Mat>()
+            (0..9).map {
+                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("$it.jpg"))))
+            }
             val result = ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("b.jpg")),list)
             Log.e("AccessbilityServiceImp", "result="
                     + result)
