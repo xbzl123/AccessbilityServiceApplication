@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
 import android.util.Log
@@ -139,6 +140,14 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
         Log.e("AccessbilityServiceImp","onReceive = "+p1?.action)
         if(accessbilityServiceImp == null ){
             accessbilityServiceImp = p0 as AccessbilityServiceImp
+        }
+
+        if (p1?.action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+            val connectivityManager = p0?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = connectivityManager.activeNetworkInfo
+            ( 0..65).map{
+                accessbilityServiceImp!!.mHandler.removeCallbacksAndMessages(it)
+            }
         }
         accessbilityServiceImp!!.timespec = 2000L
         when(p1?.action){

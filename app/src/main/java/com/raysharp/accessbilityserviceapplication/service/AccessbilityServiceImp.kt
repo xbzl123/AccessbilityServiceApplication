@@ -5,6 +5,7 @@ import android.accessibilityservice.GestureDescription
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -56,6 +57,13 @@ class AccessbilityServiceImp: AccessibilityService() {
         intentFilter.addAction(Command.ACTION_MODIFTY)
         intentFilter.addAction(Command.ACTION_START)
         intentFilter.addAction(Command.ACTION_STOP)
+
+        intentFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
+        intentFilter.addAction("android.net.ethernet.STATE_CHANGE");
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        intentFilter.addAction("android.net.wifi.STATE_CHANGE");
+        intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION)
         registerReceiver(localBroadcastReceiver,intentFilter)
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
