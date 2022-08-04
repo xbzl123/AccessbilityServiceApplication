@@ -13,7 +13,7 @@ import android.view.Display
 import androidx.annotation.RequiresApi
 import com.raysharp.accessbilityserviceapplication.service.AccessbilityServiceImp
 import com.raysharp.accessbilityserviceapplication.service.ScrollData
-import java.util.ArrayList
+import java.util.*
 
 
 /**
@@ -153,7 +153,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
         when(p1?.action){
             Command.ACTION_MODIFTY->{
                 status = p1.getIntegerArrayListExtra("status")
-
+                accessbilityServiceImp!!.taskList.clear()
             }
             Command.ACTION_START->{
                 slidingValue = -380f
@@ -203,11 +203,13 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 if(status?.get(9) == 1){
                     accessbilityServiceImp!!.startTaskBar { startSnapShoot() }
                 }
+                accessbilityServiceImp!!.taskList.map {
+                    Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+                    accessbilityServiceImp!!.mHandler.postDelayed(it.callback,it.timespec)
+                }
             }
             Command.ACTION_STOP->{
-                for (i in 0..65){
-                    accessbilityServiceImp!!.mHandler.removeCallbacksAndMessages(i)
-                }
+                accessbilityServiceImp!!.mHandler.removeCallbacksAndMessages(null)
             }
         }
     }

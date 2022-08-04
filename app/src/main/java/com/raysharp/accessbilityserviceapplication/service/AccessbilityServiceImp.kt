@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import com.raysharp.accessbilityserviceapplication.Command
 import com.raysharp.accessbilityserviceapplication.LocalBroadcastReceiver
 import java.lang.reflect.Method
+import kotlin.collections.ArrayList
 
 
 data class ScrollData(
@@ -25,6 +26,7 @@ data class ScrollData(
     val scrollX:Float,
     val scrollY:Float)
 
+data class TaskInfo(val callback: () -> Unit, val timespec: Long, val id:Int)
 
 /**
  * Copyright (c) 2022 Raysharp.cn. All rights reserved
@@ -89,7 +91,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         val callback = {
             if (height != 0f) {
                 if (width != 0f) {
-                    ActionDeal(width/2,height/2,scrollData)
+                    ActionDeal(width/2,height/2,scrollData,62)
                 }
             }
         }
@@ -102,7 +104,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         val callback = {
             if (height != 0f) {
                 if (width != 0f) {
-                    ActionDeal(width/2,height/2,scrollData)
+                    ActionDeal(width/2,height/2,scrollData,62)
                 }
             }
         }
@@ -111,7 +113,7 @@ class AccessbilityServiceImp: AccessibilityService() {
     }
     fun clickScreen(x:Float,y: Float){
         val callback = {
-            ActionDeal(x,y,null)
+            ActionDeal(x,y,null,62)
         }
         mHandler.postDelayed(callback,-1,timespec)
         timespec+=1000
@@ -123,469 +125,240 @@ class AccessbilityServiceImp: AccessibilityService() {
         val callback = {
             if (height != 0f) {
                 if (width != 0f) {
-                    ActionDeal(x,y,null)
+                    ActionDeal(x,y,null,62)
                 }
             }
         }
-        mHandler.postDelayed(callback,-1,delayTime)
+        mHandler.postDelayed(callback,62,delayTime)
     }
 
+    var executedStep = 0
+    var taskList = ArrayList<TaskInfo>()
     fun openDailyTask(){
         //打开日常任务
         val callback = {
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width-10f,height/2,null)
-                }
-            }
+            ActionDeal(width-10f,height/2,null,0)
         }
-        mHandler.postDelayed(callback,0,timespec)
+        taskList.add(TaskInfo(callback,timespec,0))
         timespec+=1000
     }
 
 
     fun commonInviteTask(){
         //打开普通邀请任务
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)
-                }
-            }
-        },1,timespec)
+        taskList.add(TaskInfo({ActionDeal(width / 4 * 3, height / 2, null, 1)},timespec,1))
         timespec+=1000
 
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4+10,height/4*3+10,null)
-                }
-            }
-        },2,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4+10,height/4*3+10,null,2)},timespec,2))
         timespec+=3000
-
         //点击确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3,height/4*3+50,null)
-                }
-            }
-        },3,timespec)
+
+        taskList.add(TaskInfo({ActionDeal(width/3,height/4*3+50,null,3)},timespec,3))
         timespec+=1000
 
         //点击返回
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/10,height/10,null)
-                }
-            }
-        },4,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/10,height/10,null,4)},timespec,4))
         timespec+=1000
 
         //领取普通邀请
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },5,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,5)},timespec,5))
         timespec+=1000
+
     }
 
     fun surviveTask(){
         //开始幸存奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)
-                }
-            }
-        },6,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,6)},timespec,6))
         timespec+=1000
+
         //开始免费幸存奖励1
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2,height/4*3+50,null)
-                }
-            }
-        },7,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2,height/4*3+50,null,7)},timespec,7))
         timespec+=1000
 
         //确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2,height/4*3+50,null)
-                }
-            }
-        },8,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2,height/4*3+50,null,8)},timespec,8))
         timespec+=1000
 
         //开始幸存奖励20钻
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2,height/4*3+50,null)
-                }
-            }
-        },9,timespec)
-        timespec+= 1000
+        taskList.add(TaskInfo({ActionDeal(width/3*2,height/4*3+50,null,9)},timespec,9))
+        timespec+=1000
+
         //确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2,height/4*3+50,null)
-                }
-            }
-        },10,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2,height/4*3+50,null,10)},timespec,10))
         timespec+=1000
 
         //关闭幸存奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/6*5.1f,height/7,null)
-                }
-            }
-        },11,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/6*5.1f,height/7,null,11)},timespec,11))
         timespec+=1000
 
         //领取幸存奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },12,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,12)},timespec,12))
         timespec+=1000
+
     }
 
 
 
     fun friendTask(){
         //开始赠送爱心
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)
-                }
-            }
-        },13,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,13)},timespec,13))
         timespec+=1000
+
         //一键领取和发送
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/6*4.5f,height/4.5f,null)
-                }
-            }
-        },14,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/6*4.5f,height/4.5f,null,14)},timespec,14))
         timespec+=1000
+
         //关闭好友列表
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/6*5,height/6,null)
-                }
-            }
-        },15,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/6*5,height/6,null,15)},timespec,15))
         timespec+=1000
+
         //领取好友奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },16,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,16)},timespec,16))
         timespec+=1000
+
     }
 
 
 
     fun lunckwheelTask(){
         //幸运转盘抽奖
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },17,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,17)},timespec,17))
         timespec+=1000
+
         //点击普通幸运转盘抽奖
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/1.8f,height/2.5f,null)                            }
-            }
-        },18,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2.5f,null,18)},timespec,18))
         timespec+=6000
+
         //再一次普通幸运转盘抽奖
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/5*3,height/4*3.2f,null)                            }
-            }
-        },19,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/5*3,height/4*3.2f,null,19)},timespec,19))
         timespec+=1000
+
         //点击确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/5*2,height/4*3.2f,null)                            }
-            }
-        },20,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/5*2,height/4*3.2f,null,20)},timespec,20))
         timespec+=2000
+
         //点击返回
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/10.5f,height/10.5f,null)
-                }
-            }
-        },21,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,21)},timespec,21))
         timespec+=1000
 
         //领取幸运转盘抽奖
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },22,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,22)},timespec,22))
         timespec+=1000
+
     }
 
 
     fun challengeInstanceZonesTask(){
         //前往挑战副本
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },23,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,23)},timespec,23))
         timespec+=1500
+
         //金币挑战
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3,height/4*3.5f,null)                            }
-            }
-        },24,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3,height/4*3.5f,null,24)},timespec,24))
         timespec+=1000
+
         //金币挑战1
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-            }
-        },25,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.2f,height/4*3.3f,null,25)},timespec,25))
         timespec+=1000
+
         //金币挑战2
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-            }
-        },26,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2f,height/4*3.3f,null,26)},timespec,26))
         timespec+=1000
+
         //确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2f,height/4*3.3f,null)                            }
-            }
-        },27,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2f,height/4*3.3f,null,27)},timespec,27))
         timespec+=1000
+
         //返回挑战副本
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.5f,height/6.5f,null)                            }
-            }
-        },28,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.5f,height/6.5f,null,28)},timespec,28))
         timespec+=1000
+
         //绿药挑战
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2,height/4*3.5f,null)                            }
-            }
-        },29,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2,height/4*3.5f,null,29)},timespec,29))
         timespec+=1000
 
         //绿药挑战1
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-            }
-        },30,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.2f,height/4*3.3f,null,30)},timespec,30))
         timespec+=1000
+
         //绿药挑战2
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-            }
-        },31,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2f,height/4*3.3f,null,31)},timespec,31))
         timespec+=1000
+
         //确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2f,height/4*3.3f,null)                            }
-            }
-        },32,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2f,height/4*3.3f,null,32)},timespec,32))
         timespec+=1000
+
         //返回挑战副本
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.5f,height/6.5f,null)                            }
-            }
-        },33,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.5f,height/6.5f,null,33)},timespec,33))
         timespec+=1000
+
         //碎片挑战
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.2f,height/4*3.5f,null)                            }
-            }
-        },34,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.2f,height/4*3.5f,null,34)},timespec,34))
         timespec+=1000
 
         //碎片挑战1
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.2f,height/4*3.3f,null)                            }
-            }
-        },35,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.2f,height/4*3.3f,null,35)},timespec,35))
         timespec+=1000
+
         //碎片挑战2
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2f,height/4*3.3f,null)                            }
-            }
-        },36,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.2f,height/4*3.3f,null,36)},timespec,36))
         timespec+=1000
+
         //确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2f,height/4*3.3f,null)                            }
-            }
-        },37,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2f,height/4*3.3f,null,37)},timespec,37))
         timespec+=1000
+
         //返回挑战副本
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.5f,height/9,null)                            }
-            }
-        },38,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.5f,height/9,null,38)},timespec,38))
         timespec+=1000
 
         //关闭挑战副本
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3*2.6f,height/9,null)                            }
-            }
-        },39,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3*2.6f,height/9,null,39)},timespec,39))
         timespec+=1000
 
         //打开日常任务
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width-10f,height/2,null)
-                }
-            }
-        },40,timespec)
+        taskList.add(TaskInfo({ActionDeal(width-10f,height/2,null,40)},timespec,40))
         timespec+=1000
 
         //领取挑战副本奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },41,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,41)},timespec,41))
         timespec+=1000
+
     }
-
-
 
     fun highlevelInviteTask(){
         //高级邀请
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width*0.7714f,height*0.798f,null)                            }
-            }
-        },42,timespec)
+        taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,42)},timespec,42))
         timespec+=1000
+
         //点击邀请
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/2,height/4*3+10,null)
-                }
-            }
-        },43,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/2,height/4*3+20,null,43)},timespec,43))
         timespec+=5000
+
         //点击确定
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/3,height/4*3.2f,null)
-                }
-            }
-        },44,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/3,height/4*3.2f,null,44)},timespec,44))
         timespec+=1000
+
         //点击返回
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/10.5f,height/10.5f,null)
-                }
-            }
-        },45,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,45)},timespec,45))
         timespec+=1000
+
         //领取啤酒邀请
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },46,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,46)},timespec,46))
         timespec+=1000
+
     }
 
     fun sportsArenaTask(){
         //竞技场
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width*0.7714f,height*0.798f,null)                            }
-            }
-        },47,timespec)
+        taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,47)},timespec,47))
         timespec+=1000
+
         var count = 0
         while (count < 3){
             //点击战斗1
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/4*3.5f,height/1.5f,null)                            }
-                }
-            },48,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
             timespec+=1000
 
 //                            //点击刷新
@@ -606,138 +379,68 @@ class AccessbilityServiceImp: AccessibilityService() {
 //                            },timespec)
 //                            timespec+=1000
             //选择最后一名点击战斗
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/4*3.2f,height/5*4,null)                            }
-                }
-            },49,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
             timespec+=1000
 
             //英雄出战点击战斗
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/4*3.2f,height/2.2f,null)                            }
-                }
-            },50,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
             timespec+=3000
 
             //翻牌中间
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/1.8f,height/2f,null)
-                        Log.e("翻盘1","widyh = "+width/1.8f+",height = "+height/2f)
-                    }
-                }
-            },51,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
             timespec+=3000
-            Log.e("timespec","timespec111 = "+timespec)
 
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/2,height/2f,null)                            }
-                }
-
-            },52,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
             timespec+=1000
+
             //点击确定
             Log.e("timespec","timespec222 = "+timespec)
-
-            mHandler.postDelayed({
-                if (height != 0f) {
-                    if (width != 0f) {
-                        ActionDeal(width/1.8f,height/5*4,null)                            }
-                }
-
-            },53,timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
             timespec+=1000
+
             count+=1
         }
 
         //点击返回
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/10.5f,height/10.5f,null)
-                }
-            }
-        },54,timespec)
-        Log.e("timespec","timespec333 = "+timespec)
-
+        taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,54)},timespec,54))
         timespec+=1000
 
         //领取战斗奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },55,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,55)},timespec,55))
         timespec+=1000
 
     }
 
     fun searchLevelTask(){
         //点击搜索关卡
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/5*4,null)                            }
-            }
-        },56,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/5*4,null,56)},timespec,56))
         timespec+=1000
+
         //点击宝箱
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/5*4.5f,height/5*4,null)                            }
-            }
-        },57,timespec)
-        timespec+=1500
-        //点击领取
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width*0.5f,height/5*4.5f,null)                            }
-            }
-        },58,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/5*4.5f,height/5*4,null,57)},timespec,57))
         timespec+=1000
+
+        //点击领取
+        taskList.add(TaskInfo({ActionDeal(width*0.5f,height/5*4.5f,null,58)},timespec,58))
+        timespec+=1000
+
         //点击返回
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/10.5f,height/10.5f,null)                            }
-            }
-        },59,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,59)},timespec,59))
         timespec+=1000
 
         //领取搜索奖励
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)                            }
-            }
-        },60,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,60)},timespec,60))
         timespec+=1000
+
     }
 
     fun startTaskBar(callback: ()->Unit){
         //打开任务栏
-        mHandler.postDelayed({
-            if (height != 0f) {
-                if (width != 0f) {
-                    ActionDeal(width/4*3,height/2,null)
-                }
-            }
-        },61,timespec)
+        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,61)},timespec,61))
         timespec+=1000
 
-        mHandler.postDelayed({
-                    callback.invoke()
-        },62,timespec)
+        taskList.add(TaskInfo(callback,timespec,62))
+
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -771,7 +474,10 @@ class AccessbilityServiceImp: AccessibilityService() {
 
 
 
-    private fun ActionDeal(x:Float, y:Float, scrollData: ScrollData?) {
+    private fun ActionDeal(x:Float, y:Float, scrollData: ScrollData?,taskid:Int) {
+        if (x <= 0 || y <= 0){
+            return
+        }
         var path = android.graphics.Path()
         path.moveTo(x,y)
         var duration = 5L
@@ -792,8 +498,9 @@ class AccessbilityServiceImp: AccessibilityService() {
                 super.onCompleted(gestureDescription)
                 Log.e("AccessbilityServiceImp","gestureDescription = onCompleted")
             }
-
         },null)
+
+//        taskList.remove(taskList.get(taskid))
     }
 
     //滑动屏幕返回

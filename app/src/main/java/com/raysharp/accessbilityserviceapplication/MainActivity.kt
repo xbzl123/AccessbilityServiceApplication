@@ -8,7 +8,6 @@ import android.content.ComponentName
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.ServiceConnection
-import android.graphics.BitmapFactory
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -16,7 +15,7 @@ import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import com.blankj.utilcode.util.ToastUtils
-import org.opencv.core.Mat
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -99,13 +98,13 @@ class MainActivity : AppCompatActivity() {
             // 发送广播
             sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
-            var list = ArrayList<Mat>()
-            (0..9).map {
-                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("$it.jpg"))))
-            }
-            val result = ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("b.jpg")),list)
-            Log.e("AccessbilityServiceImp", "result="
-                    + result)
+//            var list = ArrayList<Mat>()
+//            (0..9).map {
+//                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("$it.jpg"))))
+//            }
+//            val result = ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("b.jpg")),list)
+//            Log.e("AccessbilityServiceImp", "result="
+//                    + result)
         }
     }
 
