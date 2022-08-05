@@ -91,13 +91,38 @@
         </CheckBox>
 
 
-        <CheckBox
-            android:id="@+id/champion_tried"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="冠军试炼">
-        </CheckBox>
+            android:orientation="horizontal"
+            >
 
+            <CheckBox
+                android:id="@+id/champion_tried"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="冠军试炼" />
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="挑战次数：" />
+            <EditText
+                android:id="@+id/challenge_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:inputType="number"/>
+
+            <CheckBox
+                android:id="@+id/Vip_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="是否VIP"
+                android:checked="true">
+            </CheckBox>
+        </LinearLayout>
     </LinearLayout>
 
 

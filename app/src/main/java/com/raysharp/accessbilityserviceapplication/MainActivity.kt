@@ -14,7 +14,10 @@ import android.util.Log
 import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
+import androidx.annotation.IntegerRes
+import com.blankj.utilcode.util.StringUtils
 import com.blankj.utilcode.util.ToastUtils
+import java.util.function.IntToDoubleFunction
 import kotlin.collections.ArrayList
 
 
@@ -68,6 +71,8 @@ class MainActivity : AppCompatActivity() {
                 // 设置传播的键值对：
                 val status = ArrayList<Int>()
                 status.add(200)
+                val count = binding.challengeCount.text.toString().toInt()
+                status.add(count)
                 intent.putIntegerArrayListExtra("status", status)
                 // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
                 intent.action = Command.ACTION_MODIFTY

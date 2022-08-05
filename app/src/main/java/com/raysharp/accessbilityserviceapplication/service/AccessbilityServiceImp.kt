@@ -443,6 +443,72 @@ class AccessbilityServiceImp: AccessibilityService() {
 
     }
 
+
+    fun winnerSportsArenaTask(num: Int) {
+        taskList.clear()
+        //冠军的试炼
+        var count = 0
+        while (count < num){
+            //点击战斗1
+            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+            timespec+=1000
+
+
+            //点击刷新
+            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,480)},timespec,48))
+            timespec+=1000
+            //点击刷新
+            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,481)},timespec,48))
+            timespec+=1000
+            //点击刷新
+            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,482)},timespec,48))
+            timespec+=1000
+//            (0..3).map {
+//                //点击刷新
+//                taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/3.9f,null,48)},timespec,48))
+//                timespec+=1000
+//            }
+
+            //选择最后一名点击战斗
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
+            timespec+=1000
+
+            //英雄出战点击战斗
+            taskList.add(TaskInfo({ActionDeal(width/4*3f,height/4.5f,null,50)},timespec,50))
+            timespec+=1000
+
+
+            //点击确定
+            Log.e("timespec","timespec222 = "+timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+            timespec+=1000
+
+            //点击确定
+            Log.e("timespec","timespec222 = "+timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+            timespec+=1000
+
+            //点击确定
+            Log.e("timespec","timespec222 = "+timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+            timespec+=1000
+
+
+            //翻牌中间
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+            timespec+=3000
+
+            taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
+            timespec+=1000
+
+            //点击确定
+            Log.e("timespec","timespec222 = "+timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+            timespec+=1000
+
+            count+=1
+        }
+    }
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         val rootInActiveWindow = this.rootInActiveWindow
         Log.e("AccessbilityServiceImp","onAccessibilityEvent = "+event?.packageName

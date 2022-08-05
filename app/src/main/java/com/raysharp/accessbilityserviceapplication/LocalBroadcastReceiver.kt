@@ -154,6 +154,10 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
             Command.ACTION_MODIFTY->{
                 status = p1.getIntegerArrayListExtra("status")
                 accessbilityServiceImp!!.taskList.clear()
+
+                if (status?.get(0) == 200){
+                    accessbilityServiceImp!!.winnerSportsArenaTask(status?.get(1)!!)
+                }
             }
             Command.ACTION_START->{
                 slidingValue = -380f
@@ -169,8 +173,13 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 if(status?.get(0) == 1){
                     accessbilityServiceImp!!.openDailyTask()
                 }else if (status?.get(0) == 200){
-                    accessbilityServiceImp!!.mHandler.post {
-                        startSnapShoot()
+//                    accessbilityServiceImp!!.mHandler.post {
+//                        startSnapShoot()
+//                    }
+//                    accessbilityServiceImp!!.winnerSportsArenaTask(status?.get(1)!!)
+                    accessbilityServiceImp!!.taskList.map {
+                        Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+                        accessbilityServiceImp!!.mHandler.postDelayed(it.callback,it.timespec)
                     }
                     return
                 }
