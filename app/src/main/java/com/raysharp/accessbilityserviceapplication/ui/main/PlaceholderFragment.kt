@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.raysharp.accessbilityserviceapplication.R
 import com.raysharp.accessbilityserviceapplication.databinding.FragmentMainBinding
 
 /**
@@ -16,7 +15,7 @@ import com.raysharp.accessbilityserviceapplication.databinding.FragmentMainBindi
  */
 class PlaceholderFragment : Fragment() {
 
-    private lateinit var pageViewModel: PageViewModel
+    private val pageViewModel :PageViewModel by activityViewModels()
     private var _binding: FragmentMainBinding? = null
 
     // This property is only valid between onCreateView and
@@ -25,9 +24,9 @@ class PlaceholderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
-            setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
-        }
+//        pageViewModel = ViewModelProvider(this).get(PageViewModel::class.java).apply {
+//            setIndex(arguments?.getInt(ARG_SECTION_NUMBER) ?: 1)
+//        }
     }
 
     override fun onCreateView(

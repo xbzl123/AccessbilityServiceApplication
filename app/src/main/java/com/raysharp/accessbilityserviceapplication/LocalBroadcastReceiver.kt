@@ -122,6 +122,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                         //返回
                         accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/10.5f,accessbilityServiceImp!!.height/10.5f)
                         //领取奖励
+                        if (accessbilityServiceImp?.isExecuteDepend == false)
                         accessbilityServiceImp?.clickScreen(accessbilityServiceImp!!.width/4*3,accessbilityServiceImp!!.height/2)
                     }
                 }
@@ -132,8 +133,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
             Log.e("AccessbilityServiceImp","onFailure = "+p0)
         }
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onReceive(p0: Context?, p1: Intent?) {
@@ -172,6 +171,8 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
 
                 if(status?.get(0) == 1){
                     accessbilityServiceImp!!.openDailyTask()
+                } else if (status?.get(0) == 0) {
+                    accessbilityServiceImp!!.isExecuteDepend = true
                 }else if (status?.get(0) == 200){
 //                    accessbilityServiceImp!!.mHandler.post {
 //                        startSnapShoot()
@@ -183,6 +184,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     }
                     return
                 }
+
 
                 if(status?.get(1) == 1){
                     accessbilityServiceImp!!.commonInviteTask()

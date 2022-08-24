@@ -14,9 +14,11 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import com.raysharp.accessbilityserviceapplication.Command
 import com.raysharp.accessbilityserviceapplication.LocalBroadcastReceiver
+import com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel
 import java.lang.reflect.Method
 import kotlin.collections.ArrayList
 
@@ -37,7 +39,7 @@ data class TaskInfo(val callback: () -> Unit, val timespec: Long, val id:Int)
  */
 @RequiresApi(Build.VERSION_CODES.P)
 class AccessbilityServiceImp: AccessibilityService() {
-
+    var isExecuteDepend = false
     var width = 0f
     var height = 0f
     var timespec = 2000L
@@ -436,8 +438,11 @@ class AccessbilityServiceImp: AccessibilityService() {
 
     fun startTaskBar(callback: ()->Unit){
         //打开任务栏
-        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,61)},timespec,61))
-        timespec+=1000
+        if (!isExecuteDepend){
+            taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,61)},timespec,61))
+            timespec+=1000
+        }
+
 
         taskList.add(TaskInfo(callback,timespec,62))
 

@@ -14,14 +14,15 @@ import android.util.Log
 import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
-import androidx.annotation.IntegerRes
-import com.blankj.utilcode.util.StringUtils
+import androidx.activity.viewModels
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import com.blankj.utilcode.util.ToastUtils
-import java.util.function.IntToDoubleFunction
+import com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel
 import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
+    private val pageViewModel : PageViewModel by viewModels()
 
     private val serviceConn: ServiceConnection = object :ServiceConnection{
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
@@ -31,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         override fun onServiceDisconnected(p0: ComponentName?) {
             Log.d("MainActivity", "onServiceDisconnected -->" )
         }
-
     }
     private lateinit var binding: ActivityMainBinding
 
