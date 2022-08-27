@@ -458,7 +458,6 @@ class AccessbilityServiceImp: AccessibilityService() {
             taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
             timespec+=1000
 
-
             //点击刷新
             taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,480)},timespec,48))
             timespec+=1000
@@ -479,7 +478,7 @@ class AccessbilityServiceImp: AccessibilityService() {
             timespec+=1000
 
             //英雄出战点击战斗
-            taskList.add(TaskInfo({ActionDeal(width/4*3f,height/4.5f,null,50)},timespec,50))
+            taskList.add(TaskInfo({ActionDeal(width/4*3f,height/3.5f,null,50)},timespec,50))
             timespec+=1000
 
 
