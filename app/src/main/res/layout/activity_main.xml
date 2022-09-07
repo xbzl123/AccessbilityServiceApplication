@@ -68,13 +68,31 @@
             android:text="高级邀请"
             android:checked="true">
         </CheckBox>
-        <CheckBox
-            android:id="@+id/arena_task"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/arena_task_linearlayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="竞技场任务"
-            android:checked="true">
-        </CheckBox>
+            android:orientation="horizontal">
+            <CheckBox
+                android:id="@+id/arena_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="竞技场任务"
+                android:checked="true">
+            </CheckBox>
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="挑战次数：" />
+            <EditText
+                android:id="@+id/person_challenge_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:inputType="number"/>
+        </LinearLayout>
+
         <CheckBox
             android:id="@+id/search_task"
             android:layout_width="wrap_content"

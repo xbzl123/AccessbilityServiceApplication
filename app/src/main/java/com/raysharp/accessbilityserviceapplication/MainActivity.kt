@@ -104,13 +104,7 @@ class MainActivity : AppCompatActivity() {
             // 发送广播
             sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
-            var list = ArrayList<Mat>()
-            (0..9).map {
-                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("$it.jpg"))))
-            }
-            val result = ScreenShootDealwith.detectNumberRectValue(BitmapFactory.decodeStream(assets.open("b.jpg")),list)
-            Log.e("AccessbilityServiceImp", "result="
-                    + result)
+
         }
     }
 
@@ -118,11 +112,16 @@ class MainActivity : AppCompatActivity() {
     private fun getAllCheckBoxState(): ArrayList<Int>{
         val states = ArrayList<Int>()
         if(allCheckBoxes.isNotEmpty()){
-            states.addAll(allCheckBoxes.map {
-                if (it.isChecked)
-                    1
-                else
-                    0
+            states.addAll(allCheckBoxes.mapIndexed { index, checkBox ->
+                if (checkBox.isChecked){
+                    if (index == 7){
+                        return@mapIndexed binding.personChallengeCount.text.toString().toInt()
+                    }else{
+                        return@mapIndexed 1
+                    }
+                } else{
+                     0
+                }
             }.toList())
         }
         return states

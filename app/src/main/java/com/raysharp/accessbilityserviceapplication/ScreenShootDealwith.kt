@@ -24,8 +24,17 @@ data class TaskInfo(
     val rect: Rect,val stars:Int
 )
 
+/*
+用于opencv匹配样品图片
+ */
 data class NumberInfo(
     val minValue: Double,val index:Int
+)
+/*
+符合条件的对手，战力比自己低
+ */
+data class ComplyPlayInfo(
+    val strength: Long,val index:Int
 )
 object ScreenShootDealwith {
 
@@ -242,8 +251,12 @@ object ScreenShootDealwith {
 
         return result1
     }
-    fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): Int {
+    fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): List<ComplyPlayInfo> {
         val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        var resultPlays :List<ComplyPlayInfo>
+        val dectectedPlays = ArrayList<ComplyPlayInfo>()
+        var myPlayInfo = ComplyPlayInfo(0,0)
+
         //opencvプリプロセッサ
         if (!OpenCVLoader.initDebug()) {
             Log.d("--------opencv--------", "OpenCVLoader error")
@@ -251,16 +264,10 @@ object ScreenShootDealwith {
         //Mat変換
         val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
         Utils.bitmapToMat(bitmapNew, src)
-        val rects = ArrayList<Rect>()
 
-        rects.add(Rect(bitmapNew.width/300*82,bitmapNew.height*51/200,220,45))
+        val rects = detectPowerNumberRect(bitmap)
 
-        rects.add(Rect(bitmapNew.width/300*102,bitmapNew.height*92/200,200,45))
-        rects.add(Rect(bitmapNew.width/300*102,bitmapNew.height*252/399,200,45))
-        rects.add(Rect(bitmapNew.width/300*102,bitmapNew.height*319/400,200,45))
-
-        val levelMap = HashMap<Int,Rect>()
-        rects.map {
+        rects.mapIndexed {index,it->
             val mRgb = Mat(src, it)
 
             val b = Bitmap.createBitmap(
@@ -286,9 +293,6 @@ object ScreenShootDealwith {
             //比特反转
             val hierarchy = Mat.zeros(Size(0.0, 0.0), CvType.CV_8UC1)
 
-            val erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, Size(10.0, 1.0))
-            Imgproc.erode(src, src, erodeKernel)
-
             // 輪郭抽出
             val contours: List<MatOfPoint> = ArrayList()
 
@@ -311,8 +315,8 @@ object ScreenShootDealwith {
                 val bbox = Imgproc.minAreaRect(ptmat2)
                 box = bbox.boundingRect()
 
-                if (box.width < box.height && box.height < 45 && box.height > 25
-                    && box.y > 0) {
+                if (box.width < box.height && box.height < 50 && box.height > 25
+                    && box.y < 10) {
                     Imgproc.circle(dst, bbox.center, 5, color, -1)
                     // 周围轮廓四角形绘制 (Green)
                     color = Scalar(0.0, 255.0, 0.0)
@@ -326,7 +330,7 @@ object ScreenShootDealwith {
             }
 
             val result = ArrayList<NumberInfo>()
-            var num = 0.0
+            var num = 0L
 
             boxs.mapIndexed { index, it ->
                 val tmp = Mat(mRgb, it)
@@ -371,14 +375,20 @@ object ScreenShootDealwith {
                 result.sortBy {
                     it.minValue
                 }
-                num += result[0].index * 10.0.pow(boxs.size.toDouble() - 1 - index)
+                num += result[0].index * 10.0.pow(boxs.size.toDouble() - 1 - index).toLong()
                 result.clear()
             }
+            if (index == 0){
+                myPlayInfo = ComplyPlayInfo(num,index)
+            }else{
+                dectectedPlays.add(ComplyPlayInfo(num,index))
+            }
             Log.e("AccessbilityServiceImp", "num result =" + num)
-            levelMap.put(num.toInt(),it)
         }
-        Log.e("AccessbilityServiceImp", "levelMap result =" + levelMap)
-        return 0
+        resultPlays = dectectedPlays.filter { myPlayInfo.strength > it.strength }
+
+        Log.e("AccessbilityServiceImp", "detectFristStarsRect =" + rects)
+        return resultPlays
     }
     //战力比
     fun detectNumberRectValue(bitmap: Bitmap, list: List<Mat>): Int {
@@ -716,6 +726,124 @@ object ScreenShootDealwith {
 //        Log.e("test","bitmap1 = "+bitmapNew)
         return lastLists
     }
+
+
+    private fun detectPowerNumberRect(bitmap: Bitmap):ArrayList<Rect>{
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        //opencvプリプロセッサ
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("--------opencv--------", "OpenCVLoader error")
+        }
+        //Mat変換
+        val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, src)
+
+        val dst = Mat.zeros(Size(src.width().toDouble(), src.height().toDouble()), CvType.CV_8UC3)
+        // 輪郭を描画 (Yellow)
+        var color = Scalar(255.0, 255.0, 0.0)
+
+        //灰色化
+        Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
+        //Gaussian Filters
+        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
+        //二値化
+        Imgproc.threshold(
+            src, src, 100.0, 255.0,
+            Imgproc.THRESH_BINARY_INV
+        )
+        //比特反转
+        val hierarchy = Mat.zeros(Size(1.0, 1.0), CvType.CV_8UC1)
+
+        val erodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_DILATE, Size(13.0, 1.0))
+
+        Imgproc.erode(src,src,erodeKernel)
+
+//        Core.bitwise_not(src, src)
+
+        Utils.matToBitmap(src, bitmapNew)
+
+        // 輪郭抽出
+        val contours:List<MatOfPoint> = ArrayList()
+
+        Imgproc.findContours(
+            src,
+            contours,
+            hierarchy,
+            Imgproc.RETR_TREE,
+            Imgproc.CHAIN_APPROX_TC89_L1
+        )
+        Imgproc.drawContours(dst, contours, -1, color, 1)
+
+        val list = ArrayList<Point>()
+
+        var box: Rect?
+        val boxs = ArrayList<Rect>()
+        for (i in contours.indices) {
+
+            // 去除小轮廓 (ノイズ除去)
+            if (Imgproc.contourArea(contours.get(i)) < dst.size().area() / 1000) {
+                continue
+            }
+
+            val ptmat: MatOfPoint = contours[i]
+            // 轮廓的重心的绘制 (Red)
+            color = Scalar(255.0, 0.0, 0.0)
+            val ptmat2 = MatOfPoint2f(*ptmat.toArray())
+            val bbox = Imgproc.minAreaRect(ptmat2)
+            box = bbox.boundingRect()
+
+            if (box.width > box.height * 4.5 && box.width < box.height * 12 && box.y > 200) {
+                Imgproc.circle(dst, bbox.center, 5, color, -1)
+                list.add(bbox.center)
+
+                // 周围轮廓四角形绘制 (Green)
+                color = Scalar(0.0, 255.0, 0.0)
+                Imgproc.rectangle(dst, box.tl(), box.br(), color, 2)
+                boxs.add(expandsRect(box))
+            }
+        }
+
+        //去重复的,和名字
+        val temp = ArrayList<Rect>()
+        temp.addAll(boxs)
+        boxs.map {
+            val rect1 = it
+            var c = 0
+            boxs.map {
+                val isContainer = it.contains(rect1.tl()) || it.contains(rect1.br())
+                if(isContainer){
+                    c+=1
+                    if(c > 1){
+                        temp.remove(rect1)
+                    }
+                }
+            }
+        }
+        val result = ArrayList<Rect>()
+
+        if (temp.size > 4){
+            temp.sortBy { it.height }
+            result.addAll(temp.subList(0,4))
+            result.sortBy { it.y }
+        }else{
+            temp.sortBy { it.y }
+            result.addAll(temp)
+        }
+//        Utils.matToBitmap(dst,bitmapNew)
+//        Log.e("test","bitmap1 = "+bitmapNew)
+        return result
+    }
+
+    //垂直放大
+    private fun expandsRect(box: Rect): Rect {
+        val result = Rect()
+        result.x = box.x+5
+        result.y = box.y-5
+        result.width = box.width
+        result.height = box.height+10
+        return result
+    }
+
     private fun cutTemplateNumber(mRgb: Mat, list: ArrayList<Rect>): List<Mat> {
         var starsNum = ArrayList<Mat>()
         if(list.size == 0){

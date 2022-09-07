@@ -14,11 +14,10 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.MutableLiveData
 import com.raysharp.accessbilityserviceapplication.Command
 import com.raysharp.accessbilityserviceapplication.LocalBroadcastReceiver
-import com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel
 import java.lang.reflect.Method
 import kotlin.collections.ArrayList
 
@@ -43,6 +42,7 @@ class AccessbilityServiceImp: AccessibilityService() {
     var width = 0f
     var height = 0f
     var timespec = 2000L
+    val changeData = MutableLiveData(0)
 
     override fun onServiceConnected() {
         Log.e("AccessbilityServiceImp","AccessbilityServiceImp")
@@ -352,10 +352,93 @@ class AccessbilityServiceImp: AccessibilityService() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun sportsArenaTaskAI(){
+        //竞技场
+        if (!isExecuteDepend){
+
+            taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,47)},timespec,47))
+            timespec+=1000
+        }
+
+        //点击战斗1
+        taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+        timespec+=1000
+
+        taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
+
+        if (!isExecuteDepend){
+            //点击返回
+            taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,54)},timespec,54))
+            timespec+=1000
+
+            //领取战斗奖励
+            taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,55)},timespec,55))
+            timespec+=1000
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun sportsArenaRefreshAndSnapShoot(){
+        taskList.map {
+            mHandler.removeCallbacksAndMessages(it.id)
+        }
+        timespec = 1000L
+        taskList.clear()
+        //点击刷新
+        taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,480)},timespec,48))
+
+        taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
+        timespec+=1000
+        taskList.map {
+            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+            mHandler.postDelayed(it.callback,it.timespec)
+        }
+    }
+
+    fun sportsArenaTaskAI2(pos:Int,callback: () -> Unit){
+        taskList.map {
+            mHandler.removeCallbacksAndMessages(it.id)
+        }
+        timespec = 1000L
+        taskList.clear()
+
+        //选择一名点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
+        timespec+=500
+
+        //英雄出战点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
+        timespec+=2000
+
+        //翻牌中间
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+        timespec+=3000
+
+        taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
+        timespec+=1000
+
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1000
+
+        callback.invoke()
+
+        taskList.map {
+            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+            mHandler.postDelayed(it.callback,it.timespec)
+        }
+
+    }
+
     fun sportsArenaTask(){
         //竞技场
-        taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,47)},timespec,47))
-        timespec+=1000
+        if (!isExecuteDepend){
+
+            taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,47)},timespec,47))
+            timespec+=1000
+        }
 
         var count = 0
         while (count < 3){
@@ -363,23 +446,7 @@ class AccessbilityServiceImp: AccessibilityService() {
             taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
             timespec+=1000
 
-//                            //点击刷新
-//                            mHandler.postDelayed({
-//                                if (height != 0f) {
-//                                    if (width != 0f) {
-//                                        ActionDeal(width/4*3.3f,height/3.9f,null)                            }
-//                                }
-//                            },timespec)
-//                            timespec+=1000
-//
-//                            //点击刷新
-//                            mHandler.postDelayed({
-//                                if (height != 0f) {
-//                                    if (width != 0f) {
-//                                        ActionDeal(width/4*3.3f,height/3.9f,null)                            }
-//                                }
-//                            },timespec)
-//                            timespec+=1000
+
             //选择最后一名点击战斗
             taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
             timespec+=1000
@@ -407,9 +474,11 @@ class AccessbilityServiceImp: AccessibilityService() {
         taskList.add(TaskInfo({ActionDeal(width/10.5f,height/10.5f,null,54)},timespec,54))
         timespec+=1000
 
-        //领取战斗奖励
-        taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,55)},timespec,55))
-        timespec+=1000
+        if (!isExecuteDepend){
+            //领取战斗奖励
+            taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,55)},timespec,55))
+            timespec+=1000
+        }
 
     }
 
@@ -442,8 +511,6 @@ class AccessbilityServiceImp: AccessibilityService() {
             taskList.add(TaskInfo({ActionDeal(width/4*3,height/2,null,61)},timespec,61))
             timespec+=1000
         }
-
-
         taskList.add(TaskInfo(callback,timespec,62))
 
     }

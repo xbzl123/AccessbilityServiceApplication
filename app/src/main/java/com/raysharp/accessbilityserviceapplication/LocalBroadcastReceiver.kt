@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Handler
@@ -13,7 +14,9 @@ import android.view.Display
 import androidx.annotation.RequiresApi
 import com.raysharp.accessbilityserviceapplication.service.AccessbilityServiceImp
 import com.raysharp.accessbilityserviceapplication.service.ScrollData
+import org.opencv.core.Mat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -28,6 +31,9 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
     private var status: ArrayList<Int>? = null
     var accessbilityServiceImp: AccessbilityServiceImp? = null
     var slidingValue = -380f
+    var list = ArrayList<Mat>()
+    var fightedPlayers = ArrayList<Long>()
+
 
     @RequiresApi(Build.VERSION_CODES.R)
     var mCallBack:AccessibilityService.TakeScreenshotCallback = object :AccessibilityService.TakeScreenshotCallback{
@@ -48,6 +54,26 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     if (status?.get(0) == 200){
 //                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
 //                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
+                        return
+                    }else if (status?.get(7) != 0){
+                        if (fightedPlayers.size > status?.get(7)!!){
+                            return
+                        }
+                        val result = ScreenShootDealwith.detectNumberRect(bitmap,list)
+                        if (result.isNotEmpty()){
+                            result.map {
+                                if (fightedPlayers.indexOf(it.strength) < 5){
+                                    fightedPlayers.add(it.strength)
+                                    accessbilityServiceImp?.sportsArenaTaskAI2(it.index,{accessbilityServiceImp?.sportsArenaTaskAI()})
+                                    return@map
+                                }else{
+                                    accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
+                                }
+                            }
+                        }else{
+                            accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
+                        }
+                        Log.e("AccessbilityServiceImp", "result=" + result+",fightedPlayers ="+fightedPlayers)
                         return
                     }
                     val starsNum = ScreenShootDealwith.getStarsNum(bitmap)
@@ -139,6 +165,9 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
         Log.e("AccessbilityServiceImp","onReceive = "+p1?.action)
         if(accessbilityServiceImp == null ){
             accessbilityServiceImp = p0 as AccessbilityServiceImp
+            (0..9).map {
+                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(p0.assets.open("$it.jpg"))))
+            }
         }
 
         if (p1?.action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
@@ -204,8 +233,9 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 if(status?.get(6) == 1){
                     accessbilityServiceImp!!.highlevelInviteTask()
                 }
-                if(status?.get(7) == 1){
-                    accessbilityServiceImp!!.sportsArenaTask()
+                if(status?.get(7) != 0){
+                    fightedPlayers.clear()
+                    accessbilityServiceImp!!.sportsArenaTaskAI()
                 }
                 if(status?.get(8) == 1){
                     accessbilityServiceImp!!.searchLevelTask()
@@ -226,7 +256,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    private fun startSnapShoot() {
+    fun startSnapShoot() {
         accessbilityServiceImp!!.mHandler.postDelayed({
             accessbilityServiceImp!!.takeScreenshot(
                 Display.DEFAULT_DISPLAY,
