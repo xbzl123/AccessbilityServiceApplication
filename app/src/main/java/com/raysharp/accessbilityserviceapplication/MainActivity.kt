@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                 val count = binding.challengeCount.text.toString().toInt()
                 status.add(count)
                 intent.putIntegerArrayListExtra("status", status)
+                intent.putExtra("vip_status",binding.VipCondition.isChecked)
                 // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
                 intent.action = Command.ACTION_MODIFTY
                 // 发送广播
@@ -87,6 +88,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent()
             // 设置传播的键值对：
             intent.putIntegerArrayListExtra("status", status)
+            intent.putExtra("vip_status",binding.VipCondition.isChecked)
+
             // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功
             intent.action = Command.ACTION_MODIFTY
             // 发送广播
@@ -104,7 +107,13 @@ class MainActivity : AppCompatActivity() {
             // 发送广播
             sendBroadcast(intent)
             ToastUtils.showShort("停止成功")
-
+//            var list = ArrayList<Mat>()
+//            (0..9).map {
+//                list.add(ScreenShootDealwith.detectNumberContent(BitmapFactory.decodeStream(assets.open("$it.jpg"))))
+//            }
+//            val result = ScreenShootDealwith.detectNumberRect(BitmapFactory.decodeStream(assets.open("a.jpg")),list)
+//            Log.e("AccessbilityServiceImp", "result="
+//                    + result)
         }
     }
 

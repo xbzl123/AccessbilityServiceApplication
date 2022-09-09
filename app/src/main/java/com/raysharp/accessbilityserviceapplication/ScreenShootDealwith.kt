@@ -333,6 +333,9 @@ object ScreenShootDealwith {
             var num = 0L
 
             boxs.mapIndexed { index, it ->
+                if (it.x+it.width>mRgb.width()){
+                    it.width = mRgb.width()-it.x
+                }
                 val tmp = Mat(mRgb, it)
                 val tmpBitmap = Bitmap.createBitmap(
                     tmp!!.cols(), tmp.rows(),
@@ -387,7 +390,7 @@ object ScreenShootDealwith {
         }
         resultPlays = dectectedPlays.filter { myPlayInfo.strength > it.strength }
 
-        Log.e("AccessbilityServiceImp", "detectFristStarsRect =" + rects)
+        Log.e("AccessbilityServiceImp", "resultPlays =" + resultPlays)
         return resultPlays
     }
     //战力比
@@ -837,7 +840,7 @@ object ScreenShootDealwith {
     //垂直放大
     private fun expandsRect(box: Rect): Rect {
         val result = Rect()
-        result.x = box.x+5
+        result.x = box.x
         result.y = box.y-5
         result.width = box.width
         result.height = box.height+10

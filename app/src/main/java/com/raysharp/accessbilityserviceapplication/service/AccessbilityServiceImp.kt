@@ -43,6 +43,11 @@ class AccessbilityServiceImp: AccessibilityService() {
     var height = 0f
     var timespec = 2000L
     val changeData = MutableLiveData(0)
+    var vipStatus: Boolean = true
+    set(value) {
+        field = value
+    }
+
 
     override fun onServiceConnected() {
         Log.e("AccessbilityServiceImp","AccessbilityServiceImp")
@@ -379,10 +384,60 @@ class AccessbilityServiceImp: AccessibilityService() {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
-    fun sportsArenaRefreshAndSnapShoot(){
-        taskList.map {
-            mHandler.removeCallbacksAndMessages(it.id)
+    fun sportsArenaTaskAI2(pos:Int){
+        mHandler.removeCallbacksAndMessages(null)
+        timespec = 1000L
+        taskList.clear()
+
+        //选择一名点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
+        timespec+=1000
+
+        //英雄出战点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
+        if (!vipStatus){
+            timespec+=5000
+            //跳过战斗
+            taskList.add(TaskInfo({ActionDeal(width*1f,height/12,null,51)},timespec,51))
+            timespec+=3000
+        }else{
+            timespec+=1000
         }
+
+        //翻牌中间
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+        timespec+=1000
+
+        taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
+        timespec+=1000
+
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+
+        if (!vipStatus){
+            timespec+=3000
+        }else{
+            timespec+=1000
+        }
+
+        //点击战斗1
+        taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+        timespec+=1000
+
+        taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
+
+        taskList.map {
+            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+            mHandler.postDelayed(it.callback,it.timespec)
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun sportsArenaRefreshAndSnapShoot(){
+        mHandler.removeCallbacksAndMessages(null)
+
         timespec = 1000L
         taskList.clear()
         //点击刷新
@@ -394,42 +449,6 @@ class AccessbilityServiceImp: AccessibilityService() {
             Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
             mHandler.postDelayed(it.callback,it.timespec)
         }
-    }
-
-    fun sportsArenaTaskAI2(pos:Int,callback: () -> Unit){
-        taskList.map {
-            mHandler.removeCallbacksAndMessages(it.id)
-        }
-        timespec = 1000L
-        taskList.clear()
-
-        //选择一名点击战斗
-        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
-        timespec+=500
-
-        //英雄出战点击战斗
-        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
-        timespec+=2000
-
-        //翻牌中间
-        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
-        timespec+=3000
-
-        taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
-        timespec+=1000
-
-        //点击确定
-        Log.e("timespec","timespec222 = "+timespec)
-        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
-        timespec+=1000
-
-        callback.invoke()
-
-        taskList.map {
-            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
-            mHandler.postDelayed(it.callback,it.timespec)
-        }
-
     }
 
     fun sportsArenaTask(){
@@ -516,71 +535,98 @@ class AccessbilityServiceImp: AccessibilityService() {
     }
 
 
-    fun winnerSportsArenaTask(num: Int) {
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun winnerSportsArenaTask() {
         taskList.clear()
         //冠军的试炼
-        var count = 0
-        while (count < num){
             //点击战斗1
-            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
-            timespec+=1000
+        taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+        timespec+=1000
 
-            //点击刷新
-            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,480)},timespec,48))
-            timespec+=1000
-            //点击刷新
-            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,481)},timespec,48))
-            timespec+=1000
-            //点击刷新
-            taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,482)},timespec,48))
-            timespec+=1000
-//            (0..3).map {
-//                //点击刷新
-//                taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/3.9f,null,48)},timespec,48))
-//                timespec+=1000
-//            }
+        taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
 
-            //选择最后一名点击战斗
-            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
-            timespec+=1000
+    }
 
-            //英雄出战点击战斗
-            taskList.add(TaskInfo({ActionDeal(width/4*3f,height/3.5f,null,50)},timespec,50))
-            timespec+=1000
+    fun winnerSportsArenaTask2(pos:Int) {
+        mHandler.removeCallbacksAndMessages(null)
+        timespec = 1000L
+        taskList.clear()
 
+        //选择最后一名点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
+        timespec+=1000
 
-            //点击确定
-            Log.e("timespec","timespec222 = "+timespec)
-            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
-            timespec+=1000
-
-            //点击确定
-            Log.e("timespec","timespec222 = "+timespec)
-            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
-            timespec+=1000
-
-            //点击确定
-            Log.e("timespec","timespec222 = "+timespec)
-            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
-            timespec+=1000
-
-
-            //翻牌中间
-            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+        //英雄出战点击战斗
+        taskList.add(TaskInfo({ActionDeal(width/4*3f,height/3.5f,null,50)},timespec,50))
+        if (!vipStatus){
+            timespec+=5000
+            //跳过战斗
+            taskList.add(TaskInfo({ActionDeal(width*1f,height/12,null,51)},timespec,51))
             timespec+=3000
+        }else{
+            timespec+=1500
+        }
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        if (!vipStatus){
+            timespec+=5000
+            //跳过战斗
+            taskList.add(TaskInfo({ActionDeal(width*1f,height/12,null,51)},timespec,51))
+            timespec+=3000
+        }else{
+            timespec+=1500
+        }
 
-            taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
-            timespec+=1000
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        if (!vipStatus){
+            timespec+=5000
+            //跳过战斗
+            taskList.add(TaskInfo({ActionDeal(width*1f,height/12,null,51)},timespec,51))
+            timespec+=3000
+        }else{
+            timespec+=1500
+        }
 
-            //点击确定
-            Log.e("timespec","timespec222 = "+timespec)
-            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
-            timespec+=1000
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1500
 
-            count+=1
+
+        //翻牌中间
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+        timespec+=3000
+
+        taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
+        timespec+=1500
+
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1500
+
+        if (!vipStatus){
+            timespec+=3000
+        }else{
+            timespec+=1500
+        }
+
+
+        taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+        timespec+=1500
+
+        taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
+
+        taskList.map {
+            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+            mHandler.postDelayed(it.callback,it.timespec)
         }
     }
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+
+        override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         val rootInActiveWindow = this.rootInActiveWindow
         Log.e("AccessbilityServiceImp","onAccessibilityEvent = "+event?.packageName
         +"，action = "+event?.action+"，eventType = "+event?.eventType+",rootInActiveWindow = "+rootInActiveWindow)
@@ -615,6 +661,8 @@ class AccessbilityServiceImp: AccessibilityService() {
         if (x <= 0 || y <= 0){
             return
         }
+        Log.e("AccessbilityServiceImp ActionDeal","width = "+x+",height="+y)
+
         var path = android.graphics.Path()
         path.moveTo(x,y)
         var duration = 5L

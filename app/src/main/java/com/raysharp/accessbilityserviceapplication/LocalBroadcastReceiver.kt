@@ -52,22 +52,38 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 val bitmap = Bitmap.wrapHardwareBuffer(hardwareBuffer, colorSpace)
                 if (bitmap != null) {
                     if (status?.get(0) == 200){
+                        if (fightedPlayers.size >= status?.get(1)!!){
+                            return
+                        }
+                        val result = ScreenShootDealwith.detectNumberRect(bitmap,list).sortedBy { it.strength }
+                        if (result.isNotEmpty()){
+                            for (index in result.indices){
+                                val it = result[index]
+                                if (fightedPlayers.indexOf(it.strength) < 7){
+                                    fightedPlayers.add(it.strength)
+                                    accessbilityServiceImp?.winnerSportsArenaTask2(it.index)
+                                    return
+                                }
+                            }
+                        }else{
+                            accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
+                        }
+                        Log.e("AccessbilityServiceImp", "result=" + result+",fightedPlayers ="+fightedPlayers)
 //                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
 //                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
                         return
                     }else if (status?.get(7) != 0){
-                        if (fightedPlayers.size > status?.get(7)!!){
+                        if (fightedPlayers.size >= status?.get(7)!!){
                             return
                         }
                         val result = ScreenShootDealwith.detectNumberRect(bitmap,list)
                         if (result.isNotEmpty()){
-                            result.map {
-                                if (fightedPlayers.indexOf(it.strength) < 5){
+                            for (index in result.indices){
+                                val it = result[index]
+                                if (fightedPlayers.indexOf(it.strength) < 7){
                                     fightedPlayers.add(it.strength)
-                                    accessbilityServiceImp?.sportsArenaTaskAI2(it.index,{accessbilityServiceImp?.sportsArenaTaskAI()})
-                                    return@map
-                                }else{
-                                    accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
+                                    accessbilityServiceImp?.sportsArenaTaskAI2(it.index)
+                                    return
                                 }
                             }
                         }else{
@@ -173,25 +189,28 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
         if (p1?.action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
             val connectivityManager = p0?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = connectivityManager.activeNetworkInfo
-            ( 0..65).map{
-                accessbilityServiceImp!!.mHandler.removeCallbacksAndMessages(it)
-            }
+            accessbilityServiceImp!!.mHandler.removeCallbacksAndMessages(null)
         }
         accessbilityServiceImp!!.timespec = 2000L
         when(p1?.action){
             Command.ACTION_MODIFTY->{
                 status = p1.getIntegerArrayListExtra("status")
+                accessbilityServiceImp!!.vipStatus = p1.getBooleanExtra("vip_status",true)
                 accessbilityServiceImp!!.taskList.clear()
 
                 if (status?.get(0) == 200){
-                    accessbilityServiceImp!!.winnerSportsArenaTask(status?.get(1)!!)
+                    accessbilityServiceImp!!.winnerSportsArenaTask()
                 }
             }
             Command.ACTION_START->{
                 slidingValue = -380f
+                fightedPlayers.clear()
+                accessbilityServiceImp?.timespec = 2000L
+
                 val displayMetrics = p0?.resources?.displayMetrics
                 accessbilityServiceImp!!.width = displayMetrics?.widthPixels?.toFloat()!!
                 accessbilityServiceImp!!.height = displayMetrics?.heightPixels?.toFloat()!!
+                Log.e("AccessbilityServiceImp","width = "+accessbilityServiceImp!!.width+",height="+accessbilityServiceImp!!.height)
 
                 //消息栏收起
                 accessbilityServiceImp!!.collapseStatusBar(context = p0)
@@ -234,7 +253,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     accessbilityServiceImp!!.highlevelInviteTask()
                 }
                 if(status?.get(7) != 0){
-                    fightedPlayers.clear()
                     accessbilityServiceImp!!.sportsArenaTaskAI()
                 }
                 if(status?.get(8) == 1){
