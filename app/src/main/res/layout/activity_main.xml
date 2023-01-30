@@ -1,165 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel" />
+
+    </data>
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginHorizontal="50dp"
-        >
-
-        <CheckBox
-            android:id="@+id/all_checkbox_states"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="是否全选"
-            android:checked="true" />
-
-        <CheckBox
-            android:id="@+id/daily_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="打开日常任务"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/common_invite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="普通邀请"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/survive_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="幸存者任务"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/friend_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="好友任务"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/luck_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="幸运盘任务"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/challenge_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="挑战副本"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/senior_invite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="高级邀请"
-            android:checked="true">
-        </CheckBox>
-        <LinearLayout
-            android:id="@+id/arena_task_linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <CheckBox
-                android:id="@+id/arena_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="竞技场任务"
-                android:checked="true">
-            </CheckBox>
-            <TextView
-                android:layout_marginLeft="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="挑战次数：" />
-            <EditText
-                android:id="@+id/person_challenge_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3"
-                android:inputType="number"/>
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/search_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="战斗关卡搜寻"
-            android:checked="true">
-        </CheckBox>
-        <CheckBox
-            android:id="@+id/task_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="任务栏"
-            android:checked="true">
-        </CheckBox>
-
+        tools:context=".MainActivity">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-
-            <CheckBox
-                android:id="@+id/champion_tried"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="冠军试炼" />
+            android:orientation="vertical"
+            android:layout_marginHorizontal="50dp">
 
             <TextView
-                android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="挑战次数：" />
-            <EditText
-                android:id="@+id/challenge_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3"
-                android:inputType="number"/>
+                android:text="@{String.valueOf(viewmodel.name)}"
+                ></TextView>
 
             <CheckBox
-                android:id="@+id/Vip_condition"
+                android:id="@+id/all_checkbox_states"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="是否VIP"
-                android:checked="true">
-            </CheckBox>
+                android:text="是否全选"
+                android:checked="true" />
+
+            <CheckBox
+                android:id="@+id/daily_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="打开日常任务"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/common_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="普通邀请"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/survive_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="幸存者任务"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/friend_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="好友任务"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/luck_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="幸运盘任务"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/challenge_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="挑战副本"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/senior_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="高级邀请"
+                android:checked="true"></CheckBox>
+
+            <LinearLayout
+                android:id="@+id/arena_task_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/arena_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="竞技场任务"
+                    android:checked="true"></CheckBox>
+
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="挑战次数：" />
+
+                <EditText
+                    android:id="@+id/person_challenge_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:inputType="number" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/search_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="战斗关卡搜寻"
+                android:checked="true"></CheckBox>
+
+            <CheckBox
+                android:id="@+id/task_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="任务栏"
+                android:checked="true"></CheckBox>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/champion_tried"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="冠军试炼" />
+
+                <TextView
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="挑战次数：" />
+
+                <EditText
+                    android:id="@+id/challenge_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text="35" />
+
+                <CheckBox
+                    android:id="@+id/Vip_condition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="是否VIP"
+                    android:checked="true"></CheckBox>
+            </LinearLayout>
         </LinearLayout>
+
+
+        <Button
+            android:id="@+id/upload_modify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:checked="true"
+            android:text="提交修改" />
+
+        <Button
+            android:id="@+id/accessibility_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:checked="true"
+            android:text="关闭辅助服务" />
+
+
     </LinearLayout>
-
-
-
-    <Button
-        android:id="@+id/upload_modify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:checked="true"
-        android:text="提交修改" />
-
-    <Button
-        android:id="@+id/accessibility_service"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:checked="true"
-        android:text="关闭辅助服务" />
-
-
-</LinearLayout>
+</layout>

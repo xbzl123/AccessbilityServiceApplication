@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class PageViewModel : ViewModel() {
 
@@ -16,4 +17,7 @@ class PageViewModel : ViewModel() {
     fun setIndex(index: Int) {
         _index.value = index
     }
+
+    val name = MutableStateFlow("123")
+
 }

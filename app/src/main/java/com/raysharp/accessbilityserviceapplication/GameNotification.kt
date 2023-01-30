@@ -45,7 +45,7 @@ object GameNotification {
         )
         remoteViews!!.setOnClickPendingIntent(R.id.notice, intent_go)
 
-
+        // 设置开始按键
         val start = Intent()
         start.action = Command.ACTION_START
         val intent_start = PendingIntent.getBroadcast(
@@ -54,7 +54,7 @@ object GameNotification {
         )
         remoteViews!!.setOnClickPendingIntent(R.id.widget_play, intent_start)
 
-        // 设置收藏
+        // 设置停止按键
         val stop = Intent()
         stop.action = Command.ACTION_STOP
         val intent_stop = PendingIntent.getBroadcast(
@@ -77,7 +77,6 @@ object GameNotification {
             notify!!.contentView = remoteViews // 设置下拉图标
             notify!!.bigContentView = remoteViews // 防止显示不完全,需要添加apisupport
             notify!!.flags = Notification.FLAG_ONGOING_EVENT
-//            notify!!.icon = R.drawable.music_bg
         }
         manager!!.notify(100, notify)
     }

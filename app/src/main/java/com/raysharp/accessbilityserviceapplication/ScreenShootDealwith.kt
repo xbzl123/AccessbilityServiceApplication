@@ -265,6 +265,7 @@ object ScreenShootDealwith {
         val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
         Utils.bitmapToMat(bitmapNew, src)
 
+        //获取战力值所在的坐标位置集合
         val rects = detectPowerNumberRect(bitmap)
 
         rects.mapIndexed {index,it->
@@ -277,7 +278,7 @@ object ScreenShootDealwith {
             Utils.matToBitmap(mRgb, b)
 
             val dst = Mat.zeros(Size(src.width().toDouble(), src.height().toDouble()), CvType.CV_8UC3)
-            // 輪郭を描画 (Yellow)
+            // 绘制轮廓 (Yellow)
             var color = Scalar(255.0, 255.0, 0.0)
 
             //灰色化

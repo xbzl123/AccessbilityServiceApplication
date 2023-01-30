@@ -446,7 +446,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
         timespec+=1000
         taskList.map {
-            Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+            Log.e("AccessbilityServiceImp","sportsArenaRefreshAndSnapShoot timespec = "+it.timespec)
             mHandler.postDelayed(it.callback,it.timespec)
         }
     }

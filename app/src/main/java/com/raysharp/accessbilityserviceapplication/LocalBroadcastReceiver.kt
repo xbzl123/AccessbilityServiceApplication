@@ -38,7 +38,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
     @RequiresApi(Build.VERSION_CODES.R)
     var mCallBack:AccessibilityService.TakeScreenshotCallback = object :AccessibilityService.TakeScreenshotCallback{
 
-
         override fun onSuccess(screenshotResult: AccessibilityService.ScreenshotResult) {
 
             val nodeInfo = accessbilityServiceImp?.rootInActiveWindow
@@ -46,6 +45,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
             Log.e("AccessbilityServiceImp","onSuccess = "+screenshotResult+",result = "+result)
 
             var timespec = 500L
+            accessbilityServiceImp!!.timespec = 1000L
             val hardwareBuffer = screenshotResult.hardwareBuffer
             val colorSpace = screenshotResult.colorSpace
             if (hardwareBuffer.width > 0 && hardwareBuffer.height > 0 && colorSpace != null) {
@@ -55,7 +55,10 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                         if (fightedPlayers.size >= status?.get(1)!!){
                             return
                         }
+//                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
+//                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
                         val result = ScreenShootDealwith.detectNumberRect(bitmap,list).sortedBy { it.strength }
+                        Log.e("AccessbilityServiceImp", "result=" + result+",fightedPlayers ="+fightedPlayers)
                         if (result.isNotEmpty()){
                             for (index in result.indices){
                                 val it = result[index]
@@ -68,9 +71,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                         }else{
                             accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
                         }
-                        Log.e("AccessbilityServiceImp", "result=" + result+",fightedPlayers ="+fightedPlayers)
-//                        val skipFight = ScreenShootDealwith.getSkipFight(bitmap)
-//                        Log.e("AccessbilityServiceImp","skipFight = "+skipFight)
                         return
                     }else if (status?.get(7) != 0){
                         if (fightedPlayers.size >= status?.get(7)!!){
@@ -279,6 +279,6 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
             accessbilityServiceImp!!.takeScreenshot(
                 Display.DEFAULT_DISPLAY,
                 accessbilityServiceImp!!.mainExecutor,mCallBack)
-        },500)
+        },1000)
     }
 }

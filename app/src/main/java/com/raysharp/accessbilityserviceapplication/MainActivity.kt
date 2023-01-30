@@ -16,6 +16,9 @@ import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ToastUtils
 import com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel
 import org.opencv.core.Mat
@@ -41,8 +44,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding.viewmodel = pageViewModel
+        viewModelStore.clear()
+
+        lifecycleScope.launchWhenStarted {
+        }
 
         allCheckBoxes.add(binding.dailyTask)
         allCheckBoxes.add(binding.commonInvite)
