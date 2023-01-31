@@ -1,3 +1,5 @@
+
+
 # Android 辅助服务实战-游戏点击器
 
 ## 背景：
@@ -62,7 +64,7 @@ Android系统有提供一个无障碍功能：AccessbilityService，在Android6.
 
 开启了辅助服务后，我们需要一个媒介和该服务进行交互，并且不能影响后续的截图效果，一种能在屏幕上进行收缩的工具栏。
 
-我采用系统消息通知栏+广播来解决这个问题，它会和辅助服务进行交互：
+我采用**系统消息通知栏+广播**来解决这个问题，它会和辅助服务进行交互：
 
 
 
@@ -139,7 +141,22 @@ object GameNotification {
 
 ### 识别图片：
 
-截图获取代码片段：
+屏幕截图获取代码片段：
+
+执行截图：
+
+```
+@RequiresApi(Build.VERSION_CODES.R)
+fun startSnapShoot() {
+    accessbilityServiceImp!!.mHandler.postDelayed({
+        accessbilityServiceImp!!.takeScreenshot(
+            Display.DEFAULT_DISPLAY,
+            accessbilityServiceImp!!.mainExecutor,mCallBack)
+    },1000)
+}
+```
+
+接收截图数据：
 
 ```
  @RequiresApi(Build.VERSION_CODES.R)
@@ -474,4 +491,27 @@ val mHandler:TaskHandler = TaskHandler()
     }
 ```
 
-不同指令之间的等待时间各不相同，需要给根据实际的时间差来完成一连串指令。
+不用指令之间的等待时间各不相同，需要给根据实际的时间差来完成一连串指令。
+
+创建任务实体类：
+
+```
+data class TaskInfo(val callback: () -> Unit, val timespec: Long, val id:Int)
+```
+
+创建任务集合：
+
+```
+var taskList = ArrayList<TaskInfo>()
+```
+
+Handler执行所有的指令任务：
+
+```
+taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
+
+taskList.map {
+    Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+    mHandler.postDelayed(it.callback,it.timespec)
+}
+```
