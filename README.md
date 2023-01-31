@@ -66,7 +66,7 @@ Android系统有提供一个无障碍功能：AccessbilityService，在Android6.
 
 我采用**系统消息通知栏+广播**来解决这个问题，它会和辅助服务进行交互：
 
-![show_funcition](show_funcition.png)
+![show_function](show_function.png)
 
 
 
