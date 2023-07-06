@@ -33,6 +33,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
     var slidingValue = -380f
     var list = ArrayList<Mat>()
     var fightedPlayers = ArrayList<Long>()
+    var person_challege_count: Int = 0
 
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -61,28 +62,34 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                         Log.e("AccessbilityServiceImp", "result=" + result+",fightedPlayers ="+fightedPlayers)
                         if (result.isNotEmpty()){
                             for (index in result.indices){
-                                val it = result[index]
-                                if (fightedPlayers.indexOf(it.strength) < 7){
-                                    fightedPlayers.add(it.strength)
-                                    accessbilityServiceImp?.winnerSportsArenaTask2(it.index)
-                                    return
+                                val item = result[index]
+                                val filterlist = fightedPlayers.filter { it == item.strength }
+                                if (filterlist.size < 7){
+                                    fightedPlayers.add(item.strength)
+                                    accessbilityServiceImp?.winnerSportsArenaTask2(item.index)
+                                    break
                                 }
                             }
                         }else{
                             accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
                         }
                         return
+//                        ScreenShootDealwith.detectColorRect(bitmap)
                     }else if (status?.get(7) != 0){
-                        if (fightedPlayers.size >= status?.get(7)!!){
+                        if (fightedPlayers.size >= person_challege_count){
                             return
                         }
+
                         val result = ScreenShootDealwith.detectNumberRect(bitmap,list)
+                        Log.e("AccessbilityServiceImp", "result =" +  result)
+
                         if (result.isNotEmpty()){
                             for (index in result.indices){
-                                val it = result[index]
-                                if (fightedPlayers.indexOf(it.strength) < 7){
-                                    fightedPlayers.add(it.strength)
-                                    accessbilityServiceImp?.sportsArenaTaskAI2(it.index)
+                                val item = result[index]
+                                val filterlist = fightedPlayers.filter { it == item.strength }
+                                if (filterlist.size < 7){
+                                    fightedPlayers.add(item.strength)
+                                    accessbilityServiceImp?.sportsArenaTaskAI2(item.index)
                                     return
                                 }
                             }
@@ -194,6 +201,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
         accessbilityServiceImp!!.timespec = 2000L
         when(p1?.action){
             Command.ACTION_MODIFTY->{
+                person_challege_count = p1.getIntExtra("person_challage",0);
                 status = p1.getIntegerArrayListExtra("status")
                 accessbilityServiceImp!!.vipStatus = p1.getBooleanExtra("vip_status",true)
                 accessbilityServiceImp!!.taskList.clear()

@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ToastUtils
 import com.raysharp.accessbilityserviceapplication.ui.main.PageViewModel
+import org.jetbrains.annotations.TestOnly
 import org.opencv.core.Mat
 import kotlin.collections.ArrayList
 
@@ -41,9 +42,16 @@ class MainActivity : AppCompatActivity() {
 
     private var allCheckBoxes = arrayListOf<CheckBox>()
 
+    private fun test(){
+        val fightedPlayers = arrayListOf(6631859, 6631859, 6631859, 6631859, 6631859, 6631859, 6631859, 6504733, 6631859, 6631859, 6504733)
+        val filterlist = fightedPlayers.filter { it.equals(6504733) }
+
+        Log.e("test","fightedPlayers ="+filterlist.size)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        test()
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         binding.viewmodel = pageViewModel
         viewModelStore.clear()
@@ -95,6 +103,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent()
             // 设置传播的键值对：
             intent.putIntegerArrayListExtra("status", status)
+            intent.putExtra("person_challage",binding.personChallengeCount.text.toString().toInt())
             intent.putExtra("vip_status",binding.VipCondition.isChecked)
 
             // 指定传播该值的广播名称：必须是已经注册过的才可能传值成功

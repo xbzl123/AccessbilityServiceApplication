@@ -164,8 +164,6 @@ object ScreenShootDealwith {
 
         //灰色化
         Imgproc.cvtColor(src, src, Imgproc.COLOR_RGB2GRAY)
-        //Gaussian Filters
-//        Imgproc.GaussianBlur(src, src, Size(1.0, 1.0), 0.0, 0.0)
         //二値化
         Imgproc.threshold(
             src, src, 0.0, 255.0,
@@ -174,7 +172,6 @@ object ScreenShootDealwith {
 
         //比特反转
         val hierarchy = Mat.zeros(Size(0.0, 0.0), CvType.CV_8UC1)
-
 
         bitwise_not(src, src)
 
@@ -238,17 +235,6 @@ object ScreenShootDealwith {
         }
 
         val result1 = cutTemplateNumber(src,temp)
-
-//        val result = Mat()
-//        Imgproc.matchTemplate(result1[1],result1[0],result,Imgproc.TM_CCORR)
-//        val bitmap1 = Bitmap.createBitmap(
-//            result1[1]!!.cols(), result1[1].rows(),
-//            Bitmap.Config.ARGB_8888
-//        )
-//        Utils.matToBitmap(result1[1],bitmap1)
-//        Utils.matToBitmap(result1[1],bitmap1)
-//        Log.e("AccessbilityServiceImp", " result =" + result)
-
         return result1
     }
     fun detectNumberRect(bitmap: Bitmap, list: List<Mat>): List<ComplyPlayInfo> {
@@ -795,8 +781,9 @@ object ScreenShootDealwith {
             val ptmat2 = MatOfPoint2f(*ptmat.toArray())
             val bbox = Imgproc.minAreaRect(ptmat2)
             box = bbox.boundingRect()
+            Log.e("test","box.y = "+box.y)
 
-            if (box.width > box.height * 4.5 && box.width < box.height * 12 && box.y > 200) {
+            if (box.width > 50 && box.y > 200) {
                 Imgproc.circle(dst, bbox.center, 5, color, -1)
                 list.add(bbox.center)
 
@@ -824,11 +811,33 @@ object ScreenShootDealwith {
             }
         }
         val result = ArrayList<Rect>()
+        val points = ArrayList<Point>()
+        points.add(Point((bitmapNew.width/300*82+20).toDouble(),
+            (bitmapNew.height*51/200+8).toDouble()
+        ))
+
+        points.add(Point((bitmapNew.width/300*102+20).toDouble(),
+            (bitmapNew.height*92/200+8).toDouble()
+        ))
+        points.add(Point((bitmapNew.width/300*102+20).toDouble(),
+            (bitmapNew.height*252/399+8).toDouble()
+        ))
+        points.add(Point((bitmapNew.width/300*102+20).toDouble(),
+            (bitmapNew.height*319/400+8).toDouble()
+        ))
 
         if (temp.size > 4){
-            temp.sortBy { it.height }
-            result.addAll(temp.subList(0,4))
-            result.sortBy { it.y }
+            temp.map {
+                var rect = it
+                points.map {
+                    if (rect.contains(it)){
+                        result.add(rect)
+                    }
+                }
+            }.apply {
+                result.sortBy { it.y }
+            }
+
         }else{
             temp.sortBy { it.y }
             result.addAll(temp)
@@ -1028,5 +1037,22 @@ object ScreenShootDealwith {
         Log.e("AccessbilityServiceImp", " returnTaskStarsNum =" + contours.size)
 
         return contours.size
+    }
+
+    //获取指定颜色的图片区域
+    fun detectColorRect(bitmap:Bitmap){
+        val bitmapNew: Bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        //Mat変換
+        val src = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        Utils.bitmapToMat(bitmapNew, src)
+        //灰色化
+        val dst = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+        val last = Mat(bitmapNew.height, bitmapNew.width, CvType.CV_8UC4)
+
+        Imgproc.cvtColor(src, dst, Imgproc.COLOR_BGR2HSV)
+        //Mat変換
+        Core.inRange(dst,Scalar(26.0, 43.0, 46.0),Scalar(25.0, 255.0, 255.0),last)
+        Utils.matToBitmap(last, bitmapNew)
+        Log.e("AccessbilityServiceImp", " returnTaskStarsNum =" )
     }
 }

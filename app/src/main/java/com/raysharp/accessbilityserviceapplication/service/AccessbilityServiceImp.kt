@@ -16,8 +16,17 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.raysharp.accessbilityserviceapplication.Command
 import com.raysharp.accessbilityserviceapplication.LocalBroadcastReceiver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import java.lang.reflect.Method
 import kotlin.collections.ArrayList
 
@@ -44,7 +53,8 @@ class AccessbilityServiceImp: AccessibilityService() {
     var timespec = 2000L
     val changeData = MutableLiveData(0)
     var vipStatus: Boolean = true
-    set(value) {
+
+        set(value) {
         field = value
     }
 
@@ -138,6 +148,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         }
         mHandler.postDelayed(callback,62,delayTime)
     }
+
 
     var executedStep = 0
     var taskList = ArrayList<TaskInfo>()
@@ -388,6 +399,10 @@ class AccessbilityServiceImp: AccessibilityService() {
         mHandler.removeCallbacksAndMessages(null)
         timespec = 1000L
         taskList.clear()
+        if (!isExecuteDepend){
+            taskList.add(TaskInfo({ActionDeal(width*0.7714f,height*0.798f,null,47)},timespec,47))
+            timespec+=1000
+        }
 
         //选择一名点击战斗
         taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
@@ -406,7 +421,7 @@ class AccessbilityServiceImp: AccessibilityService() {
 
         //翻牌中间
         taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
-        timespec+=1000
+        timespec+=2000
 
         taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
         timespec+=1000
@@ -414,11 +429,17 @@ class AccessbilityServiceImp: AccessibilityService() {
         //点击确定
         Log.e("timespec","timespec222 = "+timespec)
         taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1000
+
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height*0.8f,null,53)},timespec,53))
+
 
         if (!vipStatus){
             timespec+=3000
         }else{
-            timespec+=1000
+            timespec+=1500
         }
 
         //点击战斗1
@@ -448,6 +469,38 @@ class AccessbilityServiceImp: AccessibilityService() {
         taskList.map {
             Log.e("AccessbilityServiceImp","sportsArenaRefreshAndSnapShoot timespec = "+it.timespec)
             mHandler.postDelayed(it.callback,it.timespec)
+        }
+    }
+    fun sportsArenaTask(num:Int){
+        var count = 0
+        if (num > 8)
+        while (count < num){
+            //点击战斗1
+            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+            timespec+=1000
+
+
+            //选择最后一名点击战斗
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
+            timespec+=1000
+
+            //英雄出战点击战斗
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
+            timespec+=3000
+
+            //翻牌中间
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
+            timespec+=3000
+
+            taskList.add(TaskInfo({ActionDeal(width/2,height/2f,null,52)},timespec,52))
+            timespec+=1000
+
+            //点击确定
+            Log.e("timespec","timespec222 = "+timespec)
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+            timespec+=1000
+
+            count+=1
         }
     }
 
@@ -547,6 +600,36 @@ class AccessbilityServiceImp: AccessibilityService() {
 
     }
 
+    suspend fun repeatAction(position: Int){
+        if (codeLists.size == position){
+            pos = 0
+            return
+        }
+        flow{
+            kotlinx.coroutines.delay(codeLists[position].timespec)
+            emit(position)}
+            .flowOn(Dispatchers.IO)
+            .catch {
+                Log.e("error", "throw =$this")
+            }.collect{
+                codeLists[position].callback.invoke()
+                pos = it+1
+                jobRepeat = GlobalScope.launch {
+                    repeatAction(pos)
+                }
+            }
+    }
+
+    private lateinit var jobRepeat: Job
+
+    fun tryRepeatTask(pos: Int){
+        jobRepeat = GlobalScope.launch {
+            repeatAction(pos)
+        }
+    }
+    var pos = 0
+    var codeLists = arrayListOf<TaskInfo>()
+
     fun winnerSportsArenaTask2(pos:Int) {
         mHandler.removeCallbacksAndMessages(null)
         timespec = 1000L
@@ -566,8 +649,12 @@ class AccessbilityServiceImp: AccessibilityService() {
         }else{
             timespec+=1500
         }
+
         //点击确定
-        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1000
+
+        //点击确定
         taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
         if (!vipStatus){
             timespec+=5000
@@ -608,12 +695,17 @@ class AccessbilityServiceImp: AccessibilityService() {
         taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
         timespec+=1500
 
+
+        //点击确定
+        Log.e("timespec","timespec222 = "+timespec)
+        taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
+        timespec+=1500
+
         if (!vipStatus){
             timespec+=3000
         }else{
             timespec+=1500
         }
-
 
         taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
         timespec+=1500
