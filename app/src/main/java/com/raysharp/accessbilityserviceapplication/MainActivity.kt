@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
 //            Log.e("AccessbilityServiceImp", "result="
 //                    + result)
         }
-    }
+        }
 
 
     private fun getAllCheckBoxState(): ArrayList<Int>{

@@ -76,6 +76,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         intentFilter.addAction(Command.ACTION_MODIFTY)
         intentFilter.addAction(Command.ACTION_START)
         intentFilter.addAction(Command.ACTION_STOP)
+        intentFilter.addAction(Command.ACTION_MODEL_CHANGE)
 
         intentFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
         intentFilter.addAction("android.net.ethernet.STATE_CHANGE");
@@ -406,7 +407,7 @@ class AccessbilityServiceImp: AccessibilityService() {
 
         //选择一名点击战斗
         taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*(pos+1),null,49)},timespec,49))
-        timespec+=1000
+        timespec+=1500
 
         //英雄出战点击战斗
         taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
@@ -471,22 +472,31 @@ class AccessbilityServiceImp: AccessibilityService() {
             mHandler.postDelayed(it.callback,it.timespec)
         }
     }
+    fun actionRefreshPlayer(){
+        taskList.add(TaskInfo({ActionDeal(width/4*3.3f,height/3.9f,null,480)},timespec,480))
+        timespec +=1000
+    }
     fun sportsArenaTask(num:Int){
         var count = 0
-        if (num > 8)
-        while (count < num){
-            //点击战斗1
-            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
-            timespec+=1000
+        //点击战斗1
+        taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+        timespec+=1000
 
-
+        val actionFight= {
             //选择最后一名点击战斗
             taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/5*4,null,49)},timespec,49))
             timespec+=1000
 
             //英雄出战点击战斗
             taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
-            timespec+=3000
+            if (!vipStatus){
+                timespec+=5000
+                //跳过战斗
+                taskList.add(TaskInfo({ActionDeal(width*1f,height/12,null,51)},timespec,51))
+                timespec+=3000
+            }else{
+                timespec+=1000
+            }
 
             //翻牌中间
             taskList.add(TaskInfo({ActionDeal(width/1.8f,height/2f,null,51)},timespec,51))
@@ -496,11 +506,46 @@ class AccessbilityServiceImp: AccessibilityService() {
             timespec+=1000
 
             //点击确定
-            Log.e("timespec","timespec222 = "+timespec)
             taskList.add(TaskInfo({ActionDeal(width/1.8f,height/5*4,null,53)},timespec,53))
             timespec+=1000
 
+            //点击确定
+            taskList.add(TaskInfo({ActionDeal(width/1.8f,height*0.8f,null,53)},timespec,53))
+
+
+            if (!vipStatus){
+                timespec+=3000
+            }else{
+                timespec+=1500
+            }
+
+            //点击战斗1
+            taskList.add(TaskInfo({ActionDeal(width/4*3.5f,height/1.5f,null,48)},timespec,48))
+            timespec+=1000
+        }
+        while (count < num){
+
+            var i = count / 7
+            Log.e("AccessbilityServiceImp","count = "+count+",i="+i)
+            if (i > 0) {
+                //点击刷新
+                when (i) {
+                    1 -> {
+                        actionRefreshPlayer()
+                    }
+                    else -> {
+                        (1..i).map {
+                            actionRefreshPlayer()
+                        }
+                    }
+                }
+            }
+            actionFight.invoke()
             count+=1
+        }
+        taskList.map {
+            Log.e("AccessbilityServiceImp","sportsArenaRefreshAndSnapShoot timespec = "+it.timespec)
+            mHandler.postDelayed(it.callback,it.timespec)
         }
     }
 

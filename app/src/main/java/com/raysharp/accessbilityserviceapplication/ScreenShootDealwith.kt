@@ -346,12 +346,12 @@ object ScreenShootDealwith {
                         tmp!!.cols(), tmp!!.rows(),
                         Bitmap.Config.ARGB_8888
                     )
-                    Utils.matToBitmap(tmp, bitmap)
+//                    Utils.matToBitmap(tmp, bitmap)
                     val bitmap1 = Bitmap.createBitmap(
                         item!!.cols(), item!!.rows(),
                         Bitmap.Config.ARGB_8888
                     )
-                    Utils.matToBitmap(item, bitmap1)
+//                    Utils.matToBitmap(item, bitmap1)
                     //获得最可能点，MinMaxLocResult是其数据格式，包括了最大、最小点的位置x、y
                     val mlr = Core.minMaxLoc(res)
                     result.add(NumberInfo(mlr.minVal, index))

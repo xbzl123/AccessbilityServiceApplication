@@ -64,10 +64,12 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                             for (index in result.indices){
                                 val item = result[index]
                                 val filterlist = fightedPlayers.filter { it == item.strength }
-                                if (filterlist.size < 7){
+                                if (filterlist.size < 6){
                                     fightedPlayers.add(item.strength)
                                     accessbilityServiceImp?.winnerSportsArenaTask2(item.index)
-                                    break
+                                    return
+                                } else {
+                                    accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
                                 }
                             }
                         }else{
@@ -87,10 +89,12 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                             for (index in result.indices){
                                 val item = result[index]
                                 val filterlist = fightedPlayers.filter { it == item.strength }
-                                if (filterlist.size < 7){
+                                if (filterlist.size < 6){
                                     fightedPlayers.add(item.strength)
                                     accessbilityServiceImp?.sportsArenaTaskAI2(item.index)
                                     return
+                                }else {
+                                    accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
                                 }
                             }
                         }else{
@@ -210,7 +214,32 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     accessbilityServiceImp!!.winnerSportsArenaTask()
                 }
             }
-            Command.ACTION_START->{
+            Command.ACTION_MODEL_CHANGE->{
+                //冠军的试炼启动
+                status = arrayListOf(200,50)
+                accessbilityServiceImp!!.vipStatus = true
+                accessbilityServiceImp!!.taskList.clear()
+
+                slidingValue = -380f
+                fightedPlayers.clear()
+                accessbilityServiceImp?.timespec = 2000L
+
+                val displayMetrics = p0?.resources?.displayMetrics
+                accessbilityServiceImp!!.width = displayMetrics?.widthPixels?.toFloat()!!
+                accessbilityServiceImp!!.height = displayMetrics?.heightPixels?.toFloat()!!
+                Log.e("AccessbilityServiceImp","width = "+accessbilityServiceImp!!.width+",height="+accessbilityServiceImp!!.height)
+
+                //消息栏收起
+                accessbilityServiceImp!!.collapseStatusBar(context = p0)
+                accessbilityServiceImp!!.winnerSportsArenaTask()
+                accessbilityServiceImp!!.taskList.map {
+                    Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+                    accessbilityServiceImp!!.mHandler.postDelayed(it.callback,it.timespec)
+                }
+                return
+            }
+
+                Command.ACTION_START->{
                 slidingValue = -380f
                 fightedPlayers.clear()
                 accessbilityServiceImp?.timespec = 2000L
@@ -261,7 +290,7 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                     accessbilityServiceImp!!.highlevelInviteTask()
                 }
                 if(status?.get(7) != 0){
-                    accessbilityServiceImp!!.sportsArenaTaskAI()
+                    accessbilityServiceImp!!.sportsArenaTask(person_challege_count)
                 }
                 if(status?.get(8) == 1){
                     accessbilityServiceImp!!.searchLevelTask()

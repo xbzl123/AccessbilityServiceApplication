@@ -10,6 +10,7 @@ package com.raysharp.accessbilityserviceapplication
 object Command {
     val ACTION_MODIFTY = "ACTION_MODIFTY"
     val ACTION_START = "ACTION_START"
+    val ACTION_MODEL_CHANGE = "ACTION_MODEL_CHANGE"
     val ACTION_STOP = "ACTION_STOP"
 
 }

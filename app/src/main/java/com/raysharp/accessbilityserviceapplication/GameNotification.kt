@@ -31,7 +31,7 @@ object GameNotification {
             context.packageName,
             R.layout.custom_notice
         )
-
+        remoteViews!!.setImageViewResource(R.id.widget_play_1, R.drawable.ic_baseline_play_arrow)
         remoteViews!!.setImageViewResource(R.id.widget_play, R.drawable.ic_baseline_play_arrow_24)
         remoteViews!!.setImageViewResource(R.id.widget_stop, R.drawable.ic_baseline_stop_24)
 
@@ -53,6 +53,15 @@ object GameNotification {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
         remoteViews!!.setOnClickPendingIntent(R.id.widget_play, intent_start)
+
+        // 设置开始按键1
+        val start1 = Intent()
+        start1.action = Command.ACTION_MODEL_CHANGE
+        val intent_start1 = PendingIntent.getBroadcast(
+            context, 2, start1,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        remoteViews!!.setOnClickPendingIntent(R.id.widget_play_1, intent_start1)
 
         // 设置停止按键
         val stop = Intent()
