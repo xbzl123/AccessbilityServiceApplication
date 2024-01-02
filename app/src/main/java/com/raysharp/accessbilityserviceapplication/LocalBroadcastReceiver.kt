@@ -67,9 +67,9 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                                 if (filterlist.size < 6){
                                     fightedPlayers.add(item.strength)
                                     accessbilityServiceImp?.winnerSportsArenaTask2(item.index)
-                                    return
                                 } else {
                                     accessbilityServiceImp?.sportsArenaRefreshAndSnapShoot()
+                                    continue
                                 }
                             }
                         }else{

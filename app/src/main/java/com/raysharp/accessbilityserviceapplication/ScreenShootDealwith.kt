@@ -375,6 +375,7 @@ object ScreenShootDealwith {
             }
             Log.e("AccessbilityServiceImp", "num result =" + num)
         }
+
         resultPlays = dectectedPlays.filter { myPlayInfo.strength > it.strength }
 
         Log.e("AccessbilityServiceImp", "resultPlays =" + resultPlays)

@@ -36,12 +36,15 @@ object GameNotification {
         remoteViews!!.setImageViewResource(R.id.widget_stop, R.drawable.ic_baseline_stop_24)
 
         val builder = NotificationCompat.Builder(context)
-
+        var PendingIntentFlag = PendingIntent.FLAG_ONE_SHOT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntentFlag = PendingIntent.FLAG_IMMUTABLE;
+        }
         val intent = Intent(context, MainActivity::class.java)
         // 点击跳转到主界面
         val intent_go = PendingIntent.getActivity(
             context, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntentFlag
         )
         remoteViews!!.setOnClickPendingIntent(R.id.notice, intent_go)
 
@@ -50,7 +53,7 @@ object GameNotification {
         start.action = Command.ACTION_START
         val intent_start = PendingIntent.getBroadcast(
             context, 0, start,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntentFlag
         )
         remoteViews!!.setOnClickPendingIntent(R.id.widget_play, intent_start)
 
@@ -59,7 +62,7 @@ object GameNotification {
         start1.action = Command.ACTION_MODEL_CHANGE
         val intent_start1 = PendingIntent.getBroadcast(
             context, 2, start1,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntentFlag
         )
         remoteViews!!.setOnClickPendingIntent(R.id.widget_play_1, intent_start1)
 
@@ -68,7 +71,7 @@ object GameNotification {
         stop.action = Command.ACTION_STOP
         val intent_stop = PendingIntent.getBroadcast(
             context, 1, stop,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntentFlag
         )
         remoteViews!!.setOnClickPendingIntent(R.id.widget_stop, intent_stop)
         builder.setSmallIcon(R.drawable.ic_launcher_background) // 设置顶部图标
