@@ -9,6 +9,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.ServiceConnection
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -16,6 +17,7 @@ import android.widget.CheckBox
 import android.provider.Settings.SettingNotFoundException
 import android.text.TextUtils.SimpleStringSplitter
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -158,6 +160,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun isAccessibilitySettingsOn(mContext: Context): Boolean {
         var accessibilityEnabled = 0
         // TestService为对应的服务

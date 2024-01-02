@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.raysharp.accessbilityserviceapplication"
         minSdk 23
-        targetSdk 33
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 
