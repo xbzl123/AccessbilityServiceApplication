@@ -26,7 +26,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.reflect.Method
 import kotlin.collections.ArrayList
 
@@ -77,6 +79,7 @@ class AccessbilityServiceImp: AccessibilityService() {
         intentFilter.addAction(Command.ACTION_START)
         intentFilter.addAction(Command.ACTION_STOP)
         intentFilter.addAction(Command.ACTION_MODEL_CHANGE)
+        intentFilter.addAction(Command.ACTION_MODEL_CHANGE_1)
 
         intentFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
         intentFilter.addAction("android.net.ethernet.STATE_CHANGE");
@@ -644,7 +647,43 @@ class AccessbilityServiceImp: AccessibilityService() {
         taskList.add(TaskInfo({localBroadcastReceiver.startSnapShoot()},timespec,48))
 
     }
+    /*
+    * 月度任务扫荡boss
+    * */
+    fun monthBossClean() {
+        //选择月度boss页面
+        taskList.add(TaskInfo({ActionDeal(width/3.5f,height*4/5f,null,0)},timespec,48))
+        timespec+=1000
 
+        (0..34).map {
+            if (it /11 == 0) {
+                //第一个boss
+                taskList.add(TaskInfo({ActionDeal(width/2.1f,height*4/5f,null,0)},timespec,48))
+                timespec+=1000
+            } else if (it /11 == 1){
+                //第二个boss
+                taskList.add(TaskInfo({ActionDeal(width/1.5f,height*4/5f,null,0)},timespec,48))
+                timespec+=1000
+            } else {
+                //第三个boss
+                taskList.add(TaskInfo({ActionDeal(width/1.2f,height*4/5f,null,0)},timespec,48))
+                timespec+=1000
+            }
+
+            taskList.add(TaskInfo({ActionDeal(width/2.1f,height*4.2f/5f,null,0)},timespec,48))
+            timespec+=1000
+
+            taskList.add(TaskInfo({ActionDeal(width/2.0f,height*2.0f/3f,null,0)},timespec,48))
+            timespec+=1000
+
+            //英雄出战点击战斗
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
+            timespec+=1000
+
+            taskList.add(TaskInfo({ActionDeal(width/4*3.2f,height/2.2f,null,50)},timespec,50))
+            timespec+=1000
+        }
+    }
     suspend fun repeatAction(position: Int){
         if (codeLists.size == position){
             pos = 0

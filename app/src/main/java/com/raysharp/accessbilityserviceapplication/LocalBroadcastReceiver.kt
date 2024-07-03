@@ -239,6 +239,30 @@ class LocalBroadcastReceiver: BroadcastReceiver() {
                 return
             }
 
+            Command.ACTION_MODEL_CHANGE_1->{
+                //月度扫荡boss
+                status = arrayListOf(200,50)
+                accessbilityServiceImp!!.vipStatus = true
+                accessbilityServiceImp!!.taskList.clear()
+
+                slidingValue = -380f
+                fightedPlayers.clear()
+                accessbilityServiceImp?.timespec = 2000L
+
+                val displayMetrics = p0?.resources?.displayMetrics
+                accessbilityServiceImp!!.width = displayMetrics?.widthPixels?.toFloat()!!
+                accessbilityServiceImp!!.height = displayMetrics?.heightPixels?.toFloat()!!
+                Log.e("AccessbilityServiceImp","width = "+accessbilityServiceImp!!.width+",height="+accessbilityServiceImp!!.height)
+
+                //消息栏收起
+                accessbilityServiceImp!!.collapseStatusBar(context = p0)
+                accessbilityServiceImp!!.monthBossClean()
+                accessbilityServiceImp!!.taskList.map {
+                    Log.e("AccessbilityServiceImp","timespec = "+it.timespec)
+                    accessbilityServiceImp!!.mHandler.postDelayed(it.callback,it.timespec)
+                }
+                return
+            }
                 Command.ACTION_START->{
                 slidingValue = -380f
                 fightedPlayers.clear()

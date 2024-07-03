@@ -26,6 +26,12 @@
             android:textSize="16sp"
             android:layout_gravity="bottom"
             android:text="点击器"/>
+        <ImageView
+            android:id="@+id/widget_play_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            app:srcCompat="@drawable/ic_baseline_play_arrow_1" />
 
         <ImageView
             android:id="@+id/widget_play_1"
